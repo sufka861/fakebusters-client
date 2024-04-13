@@ -34,7 +34,7 @@ const Dropzone = ({ filesRef }) => {
                     }
                 >
                     <Formik
-                        initialValues={{ files: null }}
+                        initialValues={{ files: [] }} 
                         onSubmit={(values: any) => {
                             // submit form
                         }}
@@ -53,6 +53,7 @@ const Dropzone = ({ filesRef }) => {
                                                 files={values.files}
                                                 error={touched.files && !!errors.files}
                                                 filesRef={filesRef}
+                                                multiple
                                             />
                                         </Stack>
                                         {touched.files && errors.files && (

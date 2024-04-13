@@ -28,7 +28,7 @@ const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetec
             chart: {
                 id: 'satisfaction-chart'
             },
-            labels: ['Very High Risk', 'High Risk', 'Medium Risk', 'Low Risk'],
+            labels: ['Very Low ', 'Low ', 'Medium ', 'High '],
             legend: {
                 show: true,
                 position: 'bottom',
