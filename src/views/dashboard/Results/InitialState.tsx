@@ -9,7 +9,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-const useBorderLinearProgressStyles = (value) => {
+const useBorderLinearProgressStyles = (value: number | undefined) => {
   const theme = useTheme();
   let color;
   if (value >= 70) {
@@ -35,6 +35,7 @@ const useBorderLinearProgressStyles = (value) => {
 
 
 const InitialState = ({ resultsLPA }) => {
+    console.log(resultsLPA)
     if (!resultsLPA || resultsLPA.length === 0) {
         return <div>No data available</div>;
     }
@@ -45,7 +46,7 @@ const InitialState = ({ resultsLPA }) => {
         id: index + 1,
         corpus1: item['Corpus 1'],
         corpus2: item['Corpus 2'],
-        value: parseFloat(item.value), 
+        value: parseFloat(item['Value']), 
     }));
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -55,7 +56,7 @@ const InitialState = ({ resultsLPA }) => {
             field: 'value',
             headerName: 'Filled Quantity',
             width: 150,
-            renderCell: (params) => {
+            renderCell: (params: { value: number; }) => {
                 // Invert the value and convert to percentage
                 const progressValue = (1 - params.value) * 100;
                 return (
