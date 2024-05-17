@@ -17,7 +17,7 @@ const icons = {
 
 const dashboard: NavItemType = {
     id: 'dashboard',
-    title: <FormattedMessage id="dashboard" />,
+    // title: <FormattedMessage id="dashboard" />,
     icon: icons.IconDashboard,
     type: 'group',
     children: [

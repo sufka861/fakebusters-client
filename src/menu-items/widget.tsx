@@ -6,10 +6,9 @@ import { IconChartArcs, IconClipboardList, IconChartInfographic } from '@tabler/
 // types
 import { NavItemType } from 'types';
 
-// קביעת תפריט סטטי במקום לטעון מ-API
 const staticMenu: NavItemType = {
     id: 'Other',
-    title: <FormattedMessage id="settings" />,
+    // title: <FormattedMessage id="settings" />,
     type: 'group',
     children: [
         {

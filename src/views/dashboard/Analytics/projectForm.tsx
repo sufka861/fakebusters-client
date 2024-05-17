@@ -11,6 +11,7 @@ import InputLabel from 'ui-component/extended/Form/InputLabel';
 import { gridSpacing } from 'store/constant';
 import LabelSlider from 'views/forms/components/Slider/LabelSlider';
 import AnalysisTypeSelector from 'views/forms/components/multipleChoice';
+import Box from '@mui/material/Box';
 
 const typesAnalysis = [
     { label: 'Textual analysis', id: 1 },
@@ -48,6 +49,7 @@ function ProjectForm({
                                 onChange={(e) => handleFormChange('typeOfAnalysis', e.target.value)}
                             />
                         </Grid>
+                        
                         <Grid item xs={12}>
                             <InputLabel>Email</InputLabel>
                             <TextField
@@ -63,7 +65,7 @@ function ProjectForm({
                                 Settings:
                             </Typography>
                             <Grid container spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={6}>
                                     <LabelSlider
                                         min={0.1}
                                         max={1}
@@ -81,6 +83,7 @@ function ProjectForm({
                                         step={100}
                                         onChange={(e, value) => handleFormChange('signature', value)}
                                     />
+                                    
                                 </Grid>
                                 <Grid item xs={5}>
                                     <FormControlLabel
@@ -101,10 +104,11 @@ function ProjectForm({
                                         }
                                         label="Save settings"
                                     />
-                                </Grid>
+                        </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
+  
                 </MainCard>
             </Grid>
         </Grid>

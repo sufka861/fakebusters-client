@@ -19,6 +19,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import CustomizedDialogs from './CustomizedDialogs';
 import UICardsPrimary from './UICardsPrimary';
 import UICardsSecondary from './UICardsSecondary';
+import Box from '@mui/material/Box';
 
 const Analytics = () => {
 
@@ -38,7 +39,7 @@ const Analytics = () => {
         word: null,
         freq: null,
         account: null,
-        initiaAuthorsCount: null,
+        initialAuthorsCount: null,
         initialPostsCount: null,
         FrequencyFile:''
     });
@@ -117,28 +118,33 @@ const Analytics = () => {
     const handleStartAnalysis = async () => {
         const formData = new FormData();
         if (filesRef.current && filesRef.current.length > 0) {
-            const file = filesRef.current[0];
-            formData.append('file', file);
-
-            // Append formAnalysisData fields to formData
+            filesRef.current.forEach(file => {
+                formData.append('files', file);  
+            });
             for (const [key, value] of Object.entries(formAnalysisData)) {
                 formData.append(key, value.toString());
             }
-
+    
             try {
-                const response = await axios.post('http://localhost:5000/api/s3/Preprocessing', formData);
+                const response = await axios.post('http://localhost:5000/api/s3/Preprocessing', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
                 setChartData({
-                    categories: response.data.categories, 
+                    categories: response.data.categories,
                     data: response.data.data
                 });
                 setResponseData({
                     word: response.data.word,
                     freq: response.data.freq,
                     account: response.data.account,
-                    initiaAuthorsCount: response.data.initial_authors_count,
+                    initialAuthorsCount: response.data.initial_authors_count,
                     initialPostsCount: response.data.initial_posts_count,
                     FrequencyFile: response.data.output_file_name
                 });
+                console.log(response)
+                console.log(chartData)
                 setRefreshKey(prevKey => prevKey + 1);
                 setShowChart(true);
             } catch (error) {
@@ -147,11 +153,12 @@ const Analytics = () => {
                 setShowChart(false);
             }
         } else {
-            console.log('No file to upload.');
+            console.log('No files to upload.');
             setIsProcessing(false);
             setShowChart(false);
         }
     };
+    
 
     const handleFormChange = (name, value) => {
         setFormAnalysisData(prev => ({ ...prev, [name]: value }));
@@ -206,6 +213,7 @@ const Analytics = () => {
                         setFormData={setFormAnalysisData}
                         handleFormChange={handleFormChange}
                     />
+                   
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>
                         <Grid container spacing={2}>

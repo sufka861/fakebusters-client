@@ -21,7 +21,7 @@ const Dropzone = ({ filesRef }) => {
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
                 <MainCard
-                    title="Upload CSV File"
+                    title="Upload CSV Files"
                     secondary={
                         <Stack direction="row" alignItems="center" spacing={1.25}>
                             <IconButton color={list ? 'secondary' : 'primary'} size="small" onClick={() => setList(false)}>
@@ -34,9 +34,8 @@ const Dropzone = ({ filesRef }) => {
                     }
                 >
                     <Formik
-                        initialValues={{ files: [] }} 
+                        initialValues={{ files: null }}
                         onSubmit={(values: any) => {
-                            // submit form
                         }}
                         validationSchema={yup.object().shape({
                             files: yup.mixed().required('A file is required.') // Changed the message to be more generic
@@ -53,7 +52,6 @@ const Dropzone = ({ filesRef }) => {
                                                 files={values.files}
                                                 error={touched.files && !!errors.files}
                                                 filesRef={filesRef}
-                                                multiple
                                             />
                                         </Stack>
                                         {touched.files && errors.files && (

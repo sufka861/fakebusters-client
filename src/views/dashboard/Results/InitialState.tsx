@@ -86,7 +86,7 @@ const InitialState = ({ resultsLPA }) => {
             <MainCard
             
                 content={false}
-                title="Initial State with Access"
+                title="LPA Results"
                 secondary={
                     <Stack direction="row" spacing={2} alignItems="center">
                         <CSVExport data={rows} filename={'initial-state-data-grid-table.csv'} header={headers} />

@@ -1,17 +1,13 @@
-// material-ui
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-
-// third-party
 import { useDropzone } from 'react-dropzone';
 
-// project import
 import FilesPreview from './FilePreview';
 import PlaceholderContent from './PlaceHolderContent';
 import RejectionFiles from './RejectionFile';
 
-// types
 import { CustomFile, DropzopType, UploadMultiFileProps } from 'types/dropzone';
 
 const DropzoneWrapper = styled('div')(({ theme }) => ({
@@ -23,37 +19,46 @@ const DropzoneWrapper = styled('div')(({ theme }) => ({
     '&:hover': { opacity: 0.72, cursor: 'pointer' }
 }));
 
-// ==============================|| UPLOAD - MULTIPLE FILE ||============================== //
+interface MultiFileUploadProps extends UploadMultiFileProps {
+    filesRef: React.RefObject<CustomFile[]>; 
+    showList?: boolean; 
+    type?: DropzopType; 
+    sx?: any; 
+    error?: boolean; 
+}
 
-const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, sx, onUpload, ...other }: UploadMultiFileProps) => {
+const MultiFileUpload = ({
+    error,
+    showList = false,
+    type,
+    sx,
+    filesRef
+}: MultiFileUploadProps) => {
+
     const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
-        multiple: true,
+        multiple: true, 
         onDrop: (acceptedFiles: CustomFile[]) => {
-            if (files) {
-                setFieldValue('files', [
-                    ...files,
-                    ...acceptedFiles.map((file: CustomFile) =>
-                        Object.assign(file, {
-                            preview: URL.createObjectURL(file)
-                        })
-                    )
-                ]);
-            } else {
-                setFieldValue(
-                    'files',
-                    acceptedFiles.map((file: CustomFile) =>
-                        Object.assign(file, {
-                            preview: URL.createObjectURL(file)
-                        })
-                    )
+            console.log('Accepted file:', acceptedFiles);
+            if (filesRef && filesRef.current) {
+                const newFiles = acceptedFiles.map(file => 
+                    Object.assign(file, { preview: URL.createObjectURL(file) })
                 );
+                filesRef.current = [...filesRef.current, ...newFiles]; // Combines old and new files
+                
+            } else {
+                // Initialize filesRef.current if it's not set
+                const initialFiles = acceptedFiles.map(file => 
+                    Object.assign(file, { preview: URL.createObjectURL(file) })
+                );
+                filesRef.current = initialFiles;
             }
         }
     });
 
-    const onRemove = (file: File | string) => {
-        const filteredItems = files && files.filter((_file) => _file !== file);
-        setFieldValue('files', filteredItems);
+    const onRemove = (fileToRemove: CustomFile) => {
+        if (filesRef.current) {
+            filesRef.current = filesRef.current.filter(file => file.id !== fileToRemove.id);
+        }
     };
 
     return (
@@ -86,10 +91,16 @@ const MultiFileUpload = ({ error, showList = false, files, type, setFieldValue, 
                         <input {...getInputProps()} />
                         <PlaceholderContent type={type} />
                     </DropzoneWrapper>
-           
                 </Stack>
                 {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
-                {files && files.length > 0 && <FilesPreview files={files} showList={showList} onRemove={onRemove} type={type} />}
+                {filesRef && filesRef.current && filesRef.current.length > 0 && (
+                    <FilesPreview 
+                        files={filesRef.current} 
+                        showList={showList} 
+                        onRemove={onRemove} 
+                        type={type}
+                    />
+                )}
             </Box>
         </>
     );

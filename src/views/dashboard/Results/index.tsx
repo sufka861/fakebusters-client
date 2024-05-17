@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import DetailsAnalyst from './detailsAnalyst';
-import InitialState from './InitialState';
+import UserList from './UserList';
 import ReportCards from '../Analytics/ReportCard';
 import ApexBarChart from 'views/dashboard/Analytics/ApexBarChart';
 import MainCard from 'ui-component/cards/MainCard';
@@ -48,7 +48,7 @@ const Results = () => {
                 <DetailsAnalyst />
             </Grid>
             <Grid item xs={7}>
-                <InitialState resultsLPA={resultsLPA} />
+                <UserList resultsLPA={resultsLPA} />
             </Grid>
     
             <Grid item xs={12} md={6} lg={6}>
