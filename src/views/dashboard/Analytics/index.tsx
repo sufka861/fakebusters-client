@@ -160,7 +160,7 @@ const Analytics = () => {
     };
     
 
-    const handleFormChange = (name, value) => {
+    const handleFormChange = (name: any, value: any) => {
         setFormAnalysisData(prev => ({ ...prev, [name]: value }));
     };
 
