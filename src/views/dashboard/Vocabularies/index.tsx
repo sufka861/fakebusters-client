@@ -4,6 +4,11 @@ import Vocabulary from './Vocabulary';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import { Container, Grid } from '@mui/material';
+import { gridSpacing } from 'store/constant';
+import MainCard from 'ui-component/cards/MainCard';
 
 interface VocabularyData {
   id: string;
@@ -13,6 +18,7 @@ interface VocabularyData {
 }
 
 const Vocabularies: React.FC = () => {
+  const [defaultVocabulary, setDefaultVocabulary] = useState<VocabularyData | null>(null);
   const [vocabularies, setVocabularies] = useState<VocabularyData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,14 +26,28 @@ const Vocabularies: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await axios.get('http://localhost:5000/api/vocabularies');
-        const data = result.data.map((vocabulary: any) => ({
+        const [defaultResult, vocabulariesResult] = await Promise.all([
+          axios.get('http://localhost:5000/api/vocabularies/vocabularyDefault/12345674'),
+          axios.get('http://localhost:5000/api/vocabularies/vocabularyNonDefault/12345674')
+        ]);
+        console.log('Default vocabulary result:', defaultResult.data);
+        console.log('Vocabularies result:', vocabulariesResult.data);
+        const defaultData = {
+          id: defaultResult.data._id,
+          name: 'Default Stop-Words',
+          date_modified: defaultResult.data.date_modified,
+          terms: Array.isArray(defaultResult.data.terms) ? defaultResult.data.terms : [defaultResult.data.terms]
+        };
+
+        const vocabulariesData = vocabulariesResult.data.map((vocabulary: any) => ({
           id: vocabulary._id,
           name: vocabulary.name,
           date_modified: vocabulary.date_modified,
           terms: Array.isArray(vocabulary.terms) ? vocabulary.terms : [vocabulary.terms]
         }));
-        setVocabularies(data);
+
+        setDefaultVocabulary(defaultData);
+        setVocabularies(vocabulariesData);
       } catch (error) {
         setError('Error fetching vocabularies');
         console.error('Error fetching vocabularies:', error);
@@ -58,16 +78,36 @@ const Vocabularies: React.FC = () => {
   }
 
   return (
-    <div>
-      {vocabularies.map(vocabulary => (
-        <Vocabulary
-          key={vocabulary.id}
-          name={vocabulary.name}
-          date_modified={vocabulary.date_modified}
-          terms={vocabulary.terms}
-        />
-      ))}
-    </div>
+    <Grid container spacing={gridSpacing}>
+    <Grid item xs={12}>
+      {defaultVocabulary && (
+          <MainCard title=
+              "Default Stop-Words">
+            <Vocabulary
+              key={defaultVocabulary.id}
+              name={defaultVocabulary.name}
+              date_modified={defaultVocabulary.date_modified}
+              terms={defaultVocabulary.terms}
+            />
+         </MainCard>
+      )}
+      <Grid container spacing={2} style={{ marginTop: '20px' }}>
+        {vocabularies.map(vocabulary => (
+          <Grid item xs={12} key={vocabulary.id}>
+            <Card>
+              <CardContent>
+                <Vocabulary
+                  name={vocabulary.name}
+                  date_modified={vocabulary.date_modified}
+                  terms={vocabulary.terms}
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      </Grid>
+      </Grid>
   );
 };
 
