@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics, IconClipboardList } from '@tabler/icons-react';
+import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff } from '@tabler/icons-react';
 
 // type
 import { NavItemType } from 'types';
@@ -10,7 +10,8 @@ import { NavItemType } from 'types';
 const icons = {
     IconDashboard: IconDashboard,
     IconDeviceAnalytics: IconDeviceAnalytics,
-    IconClipboardList:IconClipboardList
+    IconClipboardList:IconClipboardList,
+    IconBookFilled:IconBookOff
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -43,6 +44,14 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/results',
             icon: icons.IconClipboardList,
+            breadcrumbs: false
+        },
+        {
+            id: 'vocabularies',
+            title: <FormattedMessage id="Stop-Words" />,
+            type: 'item',
+            url: '/dashboard/vocabularies',
+            icon: icons.IconBookFilled,
             breadcrumbs: false
         }
     ]
