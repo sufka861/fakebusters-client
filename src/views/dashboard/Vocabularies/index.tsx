@@ -34,7 +34,7 @@ const Vocabularies: React.FC = () => {
         console.log('Vocabularies result:', vocabulariesResult.data);
         const defaultData = {
           id: defaultResult.data._id,
-          name: 'Default Stop-Words',
+          name: defaultResult.data.name,
           date_modified: defaultResult.data.date_modified,
           terms: Array.isArray(defaultResult.data.terms) ? defaultResult.data.terms : [defaultResult.data.terms]
         };
