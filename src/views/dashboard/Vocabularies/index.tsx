@@ -79,35 +79,39 @@ const Vocabularies: React.FC = () => {
 
   return (
     <Grid container spacing={gridSpacing}>
-    <Grid item xs={12}>
-      {defaultVocabulary && (
-          <MainCard title=
-              "Default Stop-Words">
-            <Vocabulary
-              key={defaultVocabulary.id}
-              name={defaultVocabulary.name}
-              date_modified={defaultVocabulary.date_modified}
-              terms={defaultVocabulary.terms}
-            />
-         </MainCard>
-      )}
-      <Grid container spacing={2} style={{ marginTop: '20px' }}>
-        {vocabularies.map(vocabulary => (
-          <Grid item xs={12} key={vocabulary.id}>
-            <Card>
-              <CardContent>
-                <Vocabulary
-                  name={vocabulary.name}
-                  date_modified={vocabulary.date_modified}
-                  terms={vocabulary.terms}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      </Grid>
-      </Grid>
+    <Grid item xs={12} sm={6} md={4}></Grid>
+    <Grid item xs={12} lg={12} md={12}>
+        <Grid item xs={12} >
+          {defaultVocabulary && (
+            <MainCard title="Default Stop-Words">
+              <Vocabulary
+                key={defaultVocabulary.id}
+                name={defaultVocabulary.name}
+                date_modified={defaultVocabulary.date_modified}
+                terms={defaultVocabulary.terms}
+              />
+            </MainCard>
+          )}
+        </Grid>
+        
+        <Grid container spacing={gridSpacing} style={{ marginTop: '20px' }}  >
+          {vocabularies.map((vocabulary) => (
+            <Grid item xs={12} sm={6} md={4} key={vocabulary.id} >
+              <Card>
+                <CardContent>
+                  <Vocabulary
+                    name={vocabulary.name}
+                    date_modified={vocabulary.date_modified}
+                    terms={vocabulary.terms}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+        </Grid>
+        </Grid>
+        
   );
 };
 
