@@ -22,6 +22,7 @@ const DetailsAnalyst = () => {
           typeOfAnalysis, } = state;
   const analysisType = convertTypes.find(type => type.id === typeOfAnalysis)?.label || 'Unknown Type';
 
+  
   return (
    
     <MainCard title="Details" >
