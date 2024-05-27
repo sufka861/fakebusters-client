@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { alpha, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import {
     IconButton, Stack, Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Tooltip, InputAdornment, TextField, Collapse, Box, TableSortLabel, Select, MenuItem
+    TableHead, TableRow, Tooltip, InputAdornment, TextField, Collapse, Box, TableSortLabel, Select, MenuItem, Typography
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import axios from 'axios';
@@ -24,6 +24,8 @@ type ProfileData = {
     verified: boolean;
     verified_type: string;
     profile_image_url: string;
+    created_at: string;
+    name: string;
 };
 
 type ResultsLPAProps = {
@@ -60,7 +62,9 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                         like_count: data.public_metrics.like_count,
                         verified: data.verified,
                         verified_type: data.verified_type,
-                        profile_image_url: data.profile_image_url
+                        profile_image_url: data.profile_image_url,
+                        created_at: data.created_at,
+                        name: data.name
                     }
                 }));
             } catch (error) {
@@ -190,32 +194,75 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                         <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
                                             <Box margin={1}>
                                                 {profileData[row["Corpus 1"]] && profileData[row["Corpus 2"]] ? (
-                                                    <Box display="flex" justifyContent="space-around">
-                                                        <Box>
-                                                            <h3>{profileData[row["Corpus 1"]].name}</h3>
-                                                            <p>@{profileData[row["Corpus 1"]].username}</p>
-                                                            <img src={profileData[row["Corpus 1"]].profile_image_url} alt="Profile" />
-                                                            <p>{profileData[row["Corpus 1"]].description}</p>
-                                                            <p>Followers: {profileData[row["Corpus 1"]].followers_count}</p>
-                                                            <p>Following: {profileData[row["Corpus 1"]].following_count}</p>
-                                                            <p>Tweets: {profileData[row["Corpus 1"]].tweet_count}</p>
-                                                            <p>Likes: {profileData[row["Corpus 1"]].like_count}</p>
-                                                            <p>Verified: {profileData[row["Corpus 1"]].verified ? "Yes" : "No"} ({profileData[row["Corpus 1"]].verified_type})</p>
-                                                        </Box>
-                                                        <Box>
-                                                            <h3>{profileData[row["Corpus 2"]].name}</h3>
-                                                            <p>@{profileData[row["Corpus 2"]].username}</p>
-                                                            <img src={profileData[row["Corpus 2"]].profile_image_url} alt="Profile" />
-                                                            <p>{profileData[row["Corpus 2"]].description}</p>
-                                                            <p>Followers: {profileData[row["Corpus 2"]].followers_count}</p>
-                                                            <p>Following: {profileData[row["Corpus 2"]].following_count}</p>
-                                                            <p>Tweets: {profileData[row["Corpus 2"]].tweet_count}</p>
-                                                            <p>Likes: {profileData[row["Corpus 2"]].like_count}</p>
-                                                            <p>Verified: {profileData[row["Corpus 2"]].verified ? "Yes" : "No"} ({profileData[row["Corpus 2"]].verified_type})</p>
-                                                        </Box>
-                                                    </Box>
+                                                    <TableContainer>
+                                                        <Table>
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Parameter</TableCell>
+                                                                    <TableCell>Username 1</TableCell>
+                                                                    <TableCell>Username 2</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                <TableRow>
+                                                                    <TableCell>Profile Image</TableCell>
+                                                                    <TableCell>
+                                                                        <img src={profileData[row["Corpus 1"]].profile_image_url} alt="Profile" width={80} />
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <img src={profileData[row["Corpus 2"]].profile_image_url} alt="Profile" width={80} />
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Name</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].name}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].name}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Description</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].description}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].description}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Followers Count</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].followers_count}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].followers_count}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Following Count</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].following_count}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].following_count}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Tweet Count</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].tweet_count}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].tweet_count}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Listed Count</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].listed_count}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].listed_count}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Like Count</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].like_count}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].like_count}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Verified</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].verified ? "Yes" : "No"} ({profileData[row["Corpus 1"]].verified_type})</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].verified ? "Yes" : "No"} ({profileData[row["Corpus 2"]].verified_type})</TableCell>
+                                                                </TableRow>
+                                                                <TableRow>
+                                                                    <TableCell>Created At</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].created_at}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].created_at}</TableCell>
+                                                                </TableRow>
+                                                            </TableBody>
+                                                        </Table>
+                                                    </TableContainer>
                                                 ) : (
-                                                    <p>Loading...</p>
+                                                    <Typography>Loading...</Typography>
                                                 )}
                                             </Box>
                                         </Collapse>
