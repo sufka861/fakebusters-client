@@ -42,6 +42,11 @@ const Results = () => {
                 "Corpus 1": "yosi_shahbar",
                 "Corpus 2": "yosi_shahbar",
                 "Value": "0.7"
+            },
+            {
+                "Corpus 1": "aaa",
+                "Corpus 2": "bbb",
+                "Value": "0.8"
             }],
         sockpuppetData = {
             "VeryLowLikelihood": 1,
