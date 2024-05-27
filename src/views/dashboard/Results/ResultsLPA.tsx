@@ -161,7 +161,17 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                     <TableBody>
                         {sortedData.map((row, index) => (
                             <React.Fragment key={index}>
-                                <TableRow hover onClick={() => handleRowClick(index, row["Corpus 1"], row["Corpus 2"])}>
+                                <TableRow
+                                    // hover
+                                    onClick={() => handleRowClick(index, row["Corpus 1"], row["Corpus 2"])}
+                                    // sx={{
+                                    //     backgroundColor: '#d3d3d3',
+                                    //     '&:hover': {
+                                    //         backgroundColor: '#A9A9A9',
+                                    //     },
+                                    //     transition: 'background-color 0.3s ease',
+                                    // }}
+                                >
                                     <TableCell>{row["Corpus 1"]}</TableCell>
                                     <TableCell>{row["Corpus 2"]}</TableCell>
                                     <TableCell>{row["Value"]}</TableCell>
@@ -200,11 +210,11 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                                                 <TableRow>
                                                                     <TableCell>Parameter</TableCell>
                                                                     <TableCell>{row["Corpus 1"]}</TableCell>
-                                                                    <TableCell>{row["Corpus 1"]}</TableCell>
+                                                                    <TableCell>{row["Corpus 2"]}</TableCell>
                                                                 </TableRow>
                                                             </TableHead>
                                                             <TableBody>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Profile Image</TableCell>
                                                                     <TableCell>
                                                                         <a href={`https://x.com/${row["Corpus 1"]}`} target="_blank" rel="noopener noreferrer">
@@ -212,67 +222,66 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                                                         </a>
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                    <a href={`https://x.com/${row["Corpus 1"]}`} target="_blank" rel="noopener noreferrer">
-
-                                                                        <img src={profileData[row["Corpus 2"]].profile_image_url} alt="Profile" width={80} />
-                                                                    </a>
+                                                                        <a href={`https://x.com/${row["Corpus 2"]}`} target="_blank" rel="noopener noreferrer">
+                                                                            <img src={profileData[row["Corpus 2"]].profile_image_url} alt="Profile" width={80} />
+                                                                        </a>
                                                                     </TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #000' }}>
+                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
+                                                                    <TableCell>Created At</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 1"]].created_at}</TableCell>
+                                                                    <TableCell>{profileData[row["Corpus 2"]].created_at}</TableCell>
+                                                                </TableRow>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Name</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].name}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].name}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Description</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].description}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].description}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Followers</TableCell>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+                                                                    <TableCell>Followers Count</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].followers_count}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].followers_count}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Following</TableCell>
+                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
+                                                                    <TableCell>Following Count</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].following_count}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].following_count}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Tweet Count</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].tweet_count}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].tweet_count}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Listed Count</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].listed_count}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].listed_count}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Like Count</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].like_count}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].like_count}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Verified</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].verified ? 'Yes' : 'No'}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].verified ? 'Yes' : 'No'}</TableCell>
                                                                 </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #ddd' }}>
+                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
                                                                     <TableCell>Verified Type</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 1"]].verified_type}</TableCell>
                                                                     <TableCell>{profileData[row["Corpus 2"]].verified_type}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow style={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Created At</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].created_at}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].created_at}</TableCell>
                                                                 </TableRow>
                                                             </TableBody>
                                                         </Table>
                                                     </TableContainer>
                                                 ) : (
-                                                    <Typography>Loading...</Typography>
+                                                    <Typography>Loading profile data...</Typography>
                                                 )}
                                             </Box>
                                         </Collapse>
