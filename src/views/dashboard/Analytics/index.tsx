@@ -78,7 +78,7 @@ const Analytics = () => {
             console.log('Received data:', data);
 
             if (data.message === 'Process completed') {
-                eventSource.close(); 
+                eventSource.close();
                 console.log(data.resultsLPA)
                 navigate('/dashboard/results', { state: {   responseFerqData,
                                                             resultsLPA: data.resultsLPA,

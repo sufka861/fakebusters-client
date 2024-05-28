@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 
 import DetailsAnalyst from './detailsAnalyst';
 import UserList from './UserList';
+import ResultsLPA from './ResultsLPA';
 import ReportCards from '../Analytics/ReportCard';
 import ApexBarChart from 'views/dashboard/Analytics/ApexBarChart';
 import MainCard from 'ui-component/cards/MainCard';
@@ -24,8 +25,49 @@ const Results = () => {
         responseFerqData,
         chartData,
     } = state;
-    const [refreshKey, setRefreshKey] = useState(0);
 
+    // const {
+    //     resultsLPA = [
+    //         {
+    //             "Corpus 1": "yosi_shahbar",
+    //             "Corpus 2": "yosi_shahbar",
+    //             "Value": "0.6"
+    //         },
+    //         {
+    //             "Corpus 1": "yosi_shahbar",
+    //             "Corpus 2": "yosi_shahbar",
+    //             "Value": "0.5"
+    //         },
+    //         {
+    //             "Corpus 1": "yosi_shahbar",
+    //             "Corpus 2": "yosi_shahbar",
+    //             "Value": "0.7"
+    //         },
+    //         {
+    //             "Corpus 1": "aaa",
+    //             "Corpus 2": "bbb",
+    //             "Value": "0.8"
+    //         }],
+    //     sockpuppetData = {
+    //         "VeryLowLikelihood": 1,
+    //         "LowLikelihood": 2,
+    //         "MediumLikelihood": 3,
+    //         "HighLikelihood": 4
+    //     },
+    //     responseFerqData = {
+    //         "word": "11111",
+    //         "freq": "22222",
+    //         "account": "33333",
+    //         "initialAuthorsCount": "44444",
+    //         "initialPostsCount": "55555",
+    //         "FrequencyFile":'freq_shenkar_954687bc-6ba5-45c6-a9a4-f3b09b8c9484.csv'
+    //     },
+    //     chartData,
+    // } = state;
+
+
+    const [refreshKey, setRefreshKey] = useState(0);
+    
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
             <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
@@ -47,8 +89,12 @@ const Results = () => {
             <Grid item xs={5}>
                 <DetailsAnalyst />
             </Grid>
-            <Grid item xs={7}>
-                <UserList resultsLPA={resultsLPA} />
+            <Grid item xs={12}>
+                {/* <UserList resultsLPA={resultsLPA} /> */}
+                <MainCard title="SockPuppet Distance">
+                    <ResultsLPA resultsLPA={resultsLPA} />
+                </MainCard>
+
             </Grid>
     
             <Grid item xs={12} md={6} lg={6}>
