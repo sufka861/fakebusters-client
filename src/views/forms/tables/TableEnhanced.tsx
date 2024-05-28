@@ -23,7 +23,7 @@ import { visuallyHidden } from '@mui/utils';
 import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { CSVExport } from './TableExports';
-import { header } from './TableBasic';
+import { header } from '../../dashboard/Analytics/TableBasic';
 
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';

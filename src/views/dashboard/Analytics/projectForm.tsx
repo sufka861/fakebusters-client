@@ -40,17 +40,9 @@ function ProjectForm({
                                 onChange={(e) => handleFormChange('projectName', e.target.value)}
                             />
                         </Grid>
-                        <Grid item xs={6}>
-                            <InputLabel>Type of Analysis</InputLabel>
-                            <AnalysisTypeSelector
-                                options={typesAnalysis}
-                                placeholder="Type of Analysis"
-                                value={typeOfAnalysis}
-                                onChange={(e) => handleFormChange('typeOfAnalysis', e.target.value)}
-                            />
-                        </Grid>
+
                         
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <InputLabel>Email</InputLabel>
                             <TextField
                                 type="email"
@@ -62,7 +54,7 @@ function ProjectForm({
                         </Grid>
                         <Grid item xs={12}>
                             <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                                Settings:
+                            Algorithm Settings:
                             </Typography>
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
@@ -85,26 +77,7 @@ function ProjectForm({
                                     />
                                     
                                 </Grid>
-                                <Grid item xs={5}>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                checked={saveFrequencyFile}
-                                                onChange={(e) => handleFormChange('saveFrequencyFile', e.target.checked)}
-                                            />
-                                        }
-                                        label="Save a frequency file"
-                                    />
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                checked={saveSettings}
-                                                onChange={(e) => handleFormChange('saveSettings', e.target.checked)}
-                                            />
-                                        }
-                                        label="Save settings"
-                                    />
-                        </Grid>
+                                
                             </Grid>
                         </Grid>
                     </Grid>

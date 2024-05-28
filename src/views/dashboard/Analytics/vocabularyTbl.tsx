@@ -24,8 +24,8 @@ import { visuallyHidden } from '@mui/utils';
 import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { KeyedObject, ArrangementOrder, EnhancedTableHeadProps, GetComparator, HeadCell } from 'types';
-import { CSVExport } from './TableExports';
-import { header } from './TableBasic';
+import { CSVExport } from 'views/forms/tables/TableExports';
+import { header } from 'views/dashboard/Analytics/TableBasic';
 
 // assets
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -201,7 +201,7 @@ const EnhancedTableToolbar = ({ numSelected }: { numSelected: number }) => (
 
 // ==============================|| TABLE - DATA TABLE ||============================== //
 
-export default function EnhancedTable() {
+const VocabularyTbl = () => {
     const [order, setOrder] = React.useState<ArrangementOrder>('asc');
     const [orderBy, setOrderBy] = React.useState<string>('calories');
     const [selected, setSelected] = React.useState<string[]>([]);

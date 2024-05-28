@@ -12,7 +12,7 @@ import TableRow from '@mui/material/TableRow';
 import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { gridSpacing } from 'store/constant';
-import { CSVExport } from './TableExports';
+import { CSVExport } from 'views/forms/tables/TableExports';
 
 // table data
 function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
