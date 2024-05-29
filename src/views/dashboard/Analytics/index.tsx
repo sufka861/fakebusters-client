@@ -133,60 +133,9 @@ const Analytics = () => {
         return () => clearInterval(intervalId);
     }, []);
 
-    
-    useEffect(() => {
-        if (!showChart) {
-            return; 
-        }
-
-        console.log(responseFerqData.FrequencyFile)
-
-        const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
-        const eventSource = new EventSource(url);
-
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            console.log('Received data:', data);
-
-            if (data.message === 'Process completed') {
-                eventSource.close();
-                console.log(data.resultsLPA)
-                navigate('/dashboard/results', { state: {   responseFerqData,
-                                                            resultsLPA: data.resultsLPA,
-                                                            chartData,
-                                                            sockpuppetData: data.sockpuppetData,
-                                                            ...formAnalysisData,
-                                                        } });
-            }                                                       
-        };
-
-        eventSource.onerror = (error) => {
-            console.error('EventSource failed:', error);
-            eventSource.close();
-        };
-
-        return () => {
-            eventSource.close(); 
-        };
-    }, [navigate, showChart, formAnalysisData]);
 
 
-    const handleClickOpen = () => {
-        if (filesRef.current && filesRef.current.length > 0) {
-            setOpen(true);
-            handleStartAnalysis();
-            setShowAlert(false); 
-        } else {
-            setShowAlert(true); 
-        }
-    };
-
-    const handleClose = () => {
-        setIsProcessing(true);
-        setOpen(false);
-    };
-
-    const handleStartAnalysis = async () => {
+    const handleUpFiles = async () => {
         const formData = new FormData();
         if (filesRef.current && filesRef.current.length > 0) {
             filesRef.current.forEach(file => {
@@ -194,7 +143,6 @@ const Analytics = () => {
             });
             try {
                 const response = await axios.post('http://localhost:5000/api/s3/newProject', formData, {
-                const response = await axios.post('https://fakebusters-server.onrender.com/api/s3/Preprocessing', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -309,9 +257,6 @@ const Analytics = () => {
 
         setIsProcessing(true);
         handleStartAnalysis();
-
-    const handleFormChange = (name: any, value: any) => {
-        setFormAnalysisData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleNext = () => {
