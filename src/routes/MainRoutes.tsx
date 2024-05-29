@@ -12,6 +12,7 @@ import { loader as productsLoader, productLoader } from 'api/products';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const DashboardResults = Loadable(lazy(() => import('views/dashboard/Results')));
+const DashboardVocabularies = Loadable(lazy(() => import('views/dashboard/Vocabularies')));
 
 
 // widget routing
@@ -691,6 +692,10 @@ const MainRoutes = {
         {
             path: '/dashboard/results',
             element: <DashboardResults />
+        },
+        {
+            path: '/dashboard/vocabularies',
+            element: <DashboardVocabularies />
         }
     ]
 };
