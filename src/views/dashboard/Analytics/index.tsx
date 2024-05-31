@@ -230,7 +230,7 @@ const Analytics = () => {
             {showAlert && (
                 <Grid item xs={12}>
                     <Alert severity="error" sx={{ color: 'error.main' }}>
-                        Please select a CSV  file to upload before starting the analysis.
+                        Please select a CSV file to upload before starting the analysis.
                     </Alert>
                 </Grid>
             )}
