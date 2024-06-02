@@ -122,7 +122,7 @@ const Analytics = () => {
         console.log("useEffect 2")
         console.log(responseFerqData.FrequencyFile)
 
-        const url = `http://localhost:5000/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
+        const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
         const eventSource = new EventSource(url);
 
         eventSource.onmessage = (event) => {
@@ -185,7 +185,7 @@ const Analytics = () => {
                 formData.append('files', file);
             });
             try {
-                const response = await axios.post('http://localhost:5000/api/s3/newProject', formData, {
+                const response = await axios.post('https://fakebusters-server.onrender.com/api/s3/newProject', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -265,7 +265,7 @@ const Analytics = () => {
         console.log('Sending data:', data);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/s3/preprocessing', data, {
+            const response = await axios.post('https://fakebusters-server.onrender.com/api/s3/preprocessing', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

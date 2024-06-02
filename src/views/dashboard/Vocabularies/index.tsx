@@ -27,8 +27,8 @@ const Vocabularies: React.FC = () => {
     const fetchData = async () => {
       try {
         const [defaultResult, vocabulariesResult] = await Promise.all([
-          axios.get('http://localhost:5000/api/vocabularies/vocabularyDefault/12345674'),
-          axios.get('http://localhost:5000/api/vocabularies/vocabularyNonDefault/12345674')
+          axios.get('https://fakebusters-server.onrender.com/api/vocabularies/vocabularyDefault/12345674'),
+          axios.get('https://fakebusters-server.onrender.com/api/vocabularies/vocabularyNonDefault/12345674')
         ]);
         console.log('Default vocabulary result:', defaultResult.data);
         console.log('Vocabularies result:', vocabulariesResult.data);
