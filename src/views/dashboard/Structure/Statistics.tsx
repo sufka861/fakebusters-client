@@ -64,9 +64,9 @@ function Statistics({ graphData }: StatisticsProps) {
 
     if (!nodes.length) {
         return (
-            <Grid justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-                    <CircularProgress />
-            </Grid>
+            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <CircularProgress aria-label="progress" />
+        </Grid>
         );
     }
     return (

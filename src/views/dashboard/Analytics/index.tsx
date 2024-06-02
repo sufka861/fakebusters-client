@@ -518,70 +518,10 @@ const Analytics = () => {
                         </Typography>
                     </MainCardAnalyics>
                 </Grid>
-<<<<<<< HEAD
-                {!showChart && (
-                    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                        <CircularProgress aria-label="progress" />
-                    </Grid>
-                )}
-                {showChart && (
-                    <>
-                        <ReportCards responseFerqData={responseFerqData} />
-                        <Grid item xs={12} md={6} lg={6}>
-                            <MainCard title="Highest frequency of words 1-10">
-                                <ApexBarChart key={refreshKey} categories={chartData.categories.slice(1, 11)} data={chartData.data.slice(1, 11)} bgColor={"#4994ec"} />
-                            </MainCard>
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={6}>
-                            <MainCard title="Highest frequency of words 11-20">
-                                <ApexBarChart key={refreshKey} categories={chartData.categories.slice(12, 22)} data={chartData.data.slice(12, 22)} bgColor={"#613cb0"}/>
-                            </MainCard>
-                        </Grid>
-                    </>
-                )}
-            </Grid>
-        );
-    }
-
-    return (
-       
-        <Grid container spacing={gridSpacing}>
-           
-            <Grid item xs={12} sm={6} md={4}>
-            </Grid>
-            <Grid item xs={12} lg={12} md={12}>
-                <Grid container spacing={gridSpacing}>
-                    <Grid item lg={8} md={12} sm={12} xs={12}>
-                    <ProjectForm  
-                        formData={formAnalysisData}
-                        setFormData={setFormAnalysisData}
-                        handleFormChange={handleFormChange}
-                    />
-                   
-                    </Grid>
-                    <Grid item lg={4} md={6} sm={6} xs={12}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6} style={{ minWidth: '100%', maxWidth: '100%' }}>
-                                <UICardsPrimary />
-                            </Grid>
-                            <Grid item xs={6} style={{ minWidth: '100%', maxWidth: '100%' }}>
-                                <UICardsSecondary />
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-            {showAlert && (
-                <Grid item xs={12}>
-                    <Alert severity="error" sx={{ color: 'error.main' }}>
-                        Please select a CSV file to upload before starting the analysis.
-                    </Alert>
-=======
             )}
             {isProcessing && !showChart && (
                 <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                     <CircularProgress aria-label="progress" />
->>>>>>> fbfb197ecd2cb1473a2e4f5828ab8ff83bf49ffb
                 </Grid>
             )}
             {isProcessing && showChart && (
