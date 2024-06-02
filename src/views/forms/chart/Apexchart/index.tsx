@@ -8,7 +8,7 @@ import { gridSpacing } from 'store/constant';
 // charts
 import ApexAreaChart from './ApexAreaChart';
 import ApexBarChart from './ApexBarChart';
-import ApexColumnChart from './ApexColumnChart';
+import ApexColumnChart from '../../../dashboard/Analytics/ApexColumnChart';
 import ApexLineChart from './ApexLineChart';
 import ApexMixedChart from './ApexMixedChart';
 import ApexPieChart from './ApexPieChart';

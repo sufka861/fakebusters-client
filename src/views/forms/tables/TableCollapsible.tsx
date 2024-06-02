@@ -14,7 +14,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 // project imports
-import { header } from './TableBasic';
+import { header } from '../../dashboard/Analytics/TableBasic';
 import { CSVExport } from './TableExports';
 import MainCard from 'ui-component/cards/MainCard';
 import SubCard from 'ui-component/cards/SubCard';

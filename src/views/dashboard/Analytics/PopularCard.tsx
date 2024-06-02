@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 // project imports
-import BajajAreaChartCard from './BajajAreaChartCard';
+import BajajAreaChartCard from '../Default/BajajAreaChartCard';
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonPopularCard from 'ui-component/cards/Skeleton/PopularCard';
 import { gridSpacing } from 'store/constant';

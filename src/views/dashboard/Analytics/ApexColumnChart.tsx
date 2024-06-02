@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -9,7 +9,12 @@ import ReactApexChart, { Props as ChartProps } from 'react-apexcharts';
 // project import
 import useConfig from 'hooks/useConfig';
 
-// chart options
+interface ApexColumnChartProps {
+    data: number[];
+    title: string;
+    colors: string[];
+}
+
 const columnChartOptions = {
     chart: {
         type: 'bar',
@@ -31,11 +36,11 @@ const columnChartOptions = {
         colors: ['transparent']
     },
     xaxis: {
-        categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct']
+        categories: ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110', '120', '130', '140', '150+']
     },
     yaxis: {
         title: {
-            text: '$ (thousands)'
+            text: ''
         }
     },
     fill: {
@@ -44,7 +49,7 @@ const columnChartOptions = {
     tooltip: {
         y: {
             formatter(val: number) {
-                return `$ ${val} thousands`;
+                return `${val}`;
             }
         }
     },
@@ -81,7 +86,7 @@ const columnChartOptions = {
 
 // ==============================|| COLUMN CHART ||============================== //
 
-const ApexColumnChart = () => {
+const ApexColumnChart: React.FC<ApexColumnChartProps> = ({ data, title, colors }) => {
     const theme = useTheme();
     const { mode } = useConfig();
 
@@ -89,35 +94,18 @@ const ApexColumnChart = () => {
     const darkLight = theme.palette.dark.light;
     const divider = theme.palette.divider;
 
-    const secondary = theme.palette.secondary.main;
-    const primaryMain = theme.palette.primary.main;
-    const successDark = theme.palette.success.dark;
-
-    const [series] = useState([
-        {
-            name: 'Net Profit',
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
-        },
-        {
-            name: 'Revenue',
-            data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
-        },
-        {
-            name: 'Free Cash Flow',
-            data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
-        }
-    ]);
+    const [series] = useState([{ name: title, data }]);
 
     const [options, setOptions] = useState<ChartProps>(columnChartOptions);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setOptions((prevState) => ({
             ...prevState,
-            colors: [secondary, primaryMain, successDark],
+            colors,
             xaxis: {
                 labels: {
                     style: {
-                        colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary]
+                        colors: new Array(data.length).fill(primary)
                     }
                 }
             },
@@ -126,6 +114,9 @@ const ApexColumnChart = () => {
                     style: {
                         colors: [primary]
                     }
+                },
+                title: {
+                    text: title
                 }
             },
             grid: {
@@ -140,7 +131,7 @@ const ApexColumnChart = () => {
                 }
             }
         }));
-    }, [mode, primary, darkLight, divider, secondary, primaryMain, successDark]);
+    }, [mode, primary, darkLight, divider, colors, title, data]);
 
     return (
         <div id="chart">

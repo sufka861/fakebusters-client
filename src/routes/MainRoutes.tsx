@@ -9,7 +9,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import { loader as productsLoader, productLoader } from 'api/products';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const DashboardResults = Loadable(lazy(() => import('views/dashboard/Results')));
 const DashboardStructure = Loadable(lazy(() => import('views/dashboard/Structure')));
@@ -113,10 +113,10 @@ const FrmTooltip = Loadable(lazy(() => import('views/forms/plugins/Tooltip')));
 const FrmDropzone = Loadable(lazy(() => import('views/forms/plugins/Dropzone')));
 
 // table routing
-const TableBasic = Loadable(lazy(() => import('views/forms/tables/TableBasic')));
+const TableBasic = Loadable(lazy(() => import('views/dashboard/Analytics/TableBasic')));
 const TableDense = Loadable(lazy(() => import('views/forms/tables/TableDense')));
 const TableEnhanced = Loadable(lazy(() => import('views/forms/tables/TableEnhanced')));
-const TableData = Loadable(lazy(() => import('views/forms/tables/TableData')));
+const TableData = Loadable(lazy(() => import('views/dashboard/Analytics/TableData')));
 const TableCustomized = Loadable(lazy(() => import('views/forms/tables/TablesCustomized')));
 const TableStickyHead = Loadable(lazy(() => import('views/forms/tables/TableStickyHead')));
 const TableCollapsible = Loadable(lazy(() => import('views/forms/tables/TableCollapsible')));

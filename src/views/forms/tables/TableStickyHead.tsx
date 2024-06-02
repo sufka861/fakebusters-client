@@ -17,7 +17,7 @@ import { KeyedObject } from 'types';
 import MainCard from 'ui-component/cards/MainCard';
 import SecondaryAction from 'ui-component/cards/CardSecondaryAction';
 import { CSVExport } from './TableExports';
-import { header } from './TableBasic';
+import { header } from '../../dashboard/Analytics/TableBasic';
 
 // table columns
 interface ColumnProps {
