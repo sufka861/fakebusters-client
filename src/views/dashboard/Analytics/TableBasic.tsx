@@ -25,14 +25,22 @@ export const header = [
 
 export default function TableBasic({ rows, setRows, selectedRows, setSelectedRows, setVocabulary }) {
     const handleRowClick = (row) => {
-        setSelectedRows((prev) => [...prev, row]);
-        setRows((prev) => prev.filter((r) => r.word !== row.word));
+        const alreadySelected = selectedRows.some(selectedRow => selectedRow.word === row.word);
+        if (alreadySelected) {
+            setSelectedRows((prev) => prev.filter((r) => r.word !== row.word));
+            setRows((prev) => [...prev, row]);
+        } else {
+            setSelectedRows((prev) => [...prev, row]);
+            setRows((prev) => prev.filter((r) => r.word !== row.word));
+        }
     };
 
     const handleWordDelete = (word) => {
-        setSelectedRows((prev) => prev.filter((row) => row.word !== word));
-        const removedRow = selectedRows.find((row) => row.word === word);
-        setRows((prev) => [...prev, removedRow]);
+        setSelectedRows((prev) => {
+            const removedRow = prev.find((row) => row.word === word);
+            setRows((prevRows) => [...prevRows, removedRow]);
+            return prev.filter((row) => row.word !== word);
+        });
     };
 
     const handleClearSelection = () => {

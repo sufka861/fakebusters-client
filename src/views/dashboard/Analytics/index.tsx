@@ -38,6 +38,7 @@ const Analytics = () => {
     const [showPreChart, setPreShowChart] = useState(false);
     const [chartData, setChartData] = useState({ categories: [], data: [] });
     const [chartPreData, setChartPreData] = useState({ categories: [], data: [] });
+    const [chartWordData, setChartWordData] = useState({ categories: [], data: [] });
 
     const [responseFerqData, setResponseFerqData] = useState({
         word: null,
@@ -45,17 +46,18 @@ const Analytics = () => {
         account: null,
         initialAuthorsCount: null,
         initialPostsCount: null,
-        FrequencyFile:''
+        FrequencyFile: ''
     });
+    const [uploadFile, setUploadFile] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const filesRef = useRef([]);
     const [showForm, setShowForm] = useState(false);
-    const [freqFileName, setfreqFileName] = useState([])
+    const [freqFileName, setFreqFileName] = useState([]);
     const [projectName, setProjectName] = useState('');
     const [email, setEmail] = useState('');
     const [threshold, setThreshold] = useState(0.5);
     const [signature, setSignature] = useState(1000);
-    const [acountThreshold, setAcountThreshold] = useState(1000);
+    const [accountThreshold, setAccountThreshold] = useState(1000);
     const [wordThreshold, setWordThreshold] = useState(1000);
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
@@ -63,18 +65,19 @@ const Analytics = () => {
     const [sentenceIndex, setSentenceIndex] = useState(0);
     const [isDroppingPunctuation, setIsDroppingPunctuation] = useState(true);
     const [isDroppingLinks, setIsDroppingLinks] = useState(true);
-
+    const [loading, setLoading] = useState(false);
     const [vocabulary, setVocabulary] = useState({ VocabularyWord: [], FreqWord: [] });
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
-
+    const navigate = useNavigate();
+    const [startConnection, setStartConnection]= useState(false)
     const [responseFerq, setResponseData] = useState({
         word: null,
         freq: null,
         account: null,
         initialAuthorsCount: null,
         initialPostsCount: null,
-        FrequencyFile:''
+        FrequencyFile: ''
     });
     const [formAnalysisData, setFormAnalysisData] = useState({
         projectName: '',
@@ -105,9 +108,51 @@ const Analytics = () => {
         if (field === 'email') setEmail(value);
         if (field === 'threshold') setThreshold(value);
         if (field === 'signature') setSignature(value);
-        if (field === 'word threshold') setWordThreshold(value);
-        if (field === 'acountThreshold') setAcountThreshold(value);
+        if (field === 'wordThreshold') setWordThreshold(value);
+        if (field === 'accountThreshold') setAccountThreshold(value);
     };
+
+    useEffect(() => {
+        console.log('useEffect' )
+        console.log(responseFerqData.FrequencyFile )
+
+        if (!responseFerqData.FrequencyFile) {
+            return;
+        }
+        console.log("useEffect 2")
+        console.log(responseFerqData.FrequencyFile)
+
+        const url = `http://localhost:5000/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
+        const eventSource = new EventSource(url);
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log('Received data:', data);
+
+            if (data.message === 'Process completed') {
+                eventSource.close();
+                console.log(data.resultsLPA);
+                navigate('/dashboard/results', {
+                    state: {
+                        responseFerqData,
+                        resultsLPA: data.resultsLPA,
+                        chartData,
+                        sockpuppetData: data.sockpuppetData,
+                        ...formAnalysisData,
+                    }
+                });
+            }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error('EventSource failed:', error);
+            eventSource.close();
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, [startConnection]);
 
     const handleThresholdSwitchChange = () => {
         setShowThresholdSettings(prev => !prev);
@@ -128,18 +173,16 @@ const Analytics = () => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             setSentenceIndex((prevIndex) => (prevIndex + 1) % sentences.length);
-        }, 2000); 
+        }, 2000);
 
         return () => clearInterval(intervalId);
     }, []);
-
-
 
     const handleUpFiles = async () => {
         const formData = new FormData();
         if (filesRef.current && filesRef.current.length > 0) {
             filesRef.current.forEach(file => {
-                formData.append('files', file);  
+                formData.append('files', file);
             });
             try {
                 const response = await axios.post('http://localhost:5000/api/s3/newProject', formData, {
@@ -147,12 +190,16 @@ const Analytics = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-                setPreShowChart(true)
+                setLoading(false);
+                setPreShowChart(true);
                 setShowForm(true);
+                setUploadFile(true);
                 console.log(response);
 
                 const categories = Object.keys(response.data.postsDistribution.posts_distribution);
                 const data = Object.values(response.data.postsDistribution.posts_distribution);
+                const categoriesWord = Object.keys(response.data.postsDistribution.words_distribution);
+                const dataWord = Object.values(response.data.postsDistribution.words_distribution);
 
                 const num_authors = response.data.postsDistribution.num_authors;
                 const max_words = response.data.postsDistribution.max_words;
@@ -160,12 +207,16 @@ const Analytics = () => {
 
                 const FreqWord = response.data.postsDistribution.most_common_words;
                 const VocabularyWord = response.data.vocabularyData;
-                const freqFileName = response.data.combinedFileName
-                setfreqFileName(freqFileName)
+                const freqFileName = response.data.combinedFileName;
+                setFreqFileName(freqFileName);
 
                 setChartPreData({
                     categories: categories,
                     data: data
+                });
+                setChartWordData({
+                    categories: categoriesWord,
+                    data: dataWord
                 });
                 setHoverDataCard({
                     num_authors: num_authors,
@@ -181,20 +232,20 @@ const Analytics = () => {
                 setRows(initialRows);
 
                 setRefreshKey(prevKey => prevKey + 1);
-                setShowChart(true);
                 setIsProcessing(false);
             } catch (error) {
                 console.error('Error uploading file:', error);
-                setPreShowChart(false)
+                setPreShowChart(false);
                 setShowForm(false);
+                setUploadFile(false);
             }
         } else {
+            setUploadFile(false);
             setShowAlert(true);
-            setPreShowChart(false)
+            setPreShowChart(false);
             setShowForm(false);
         }
     };
-
 
     const handleStartAnalysis = async () => {
         const data = {
@@ -202,7 +253,7 @@ const Analytics = () => {
             email: email,
             threshold: threshold,
             signature: signature,
-            account_threshold: acountThreshold,
+            account_threshold: accountThreshold,
             wordThreshold: wordThreshold,
             vocabulary: vocabulary.VocabularyWord,
             isDroppingLinks: isDroppingLinks,
@@ -212,7 +263,7 @@ const Analytics = () => {
             showTblholdSettings: showTblholdSettings
         };
         console.log('Sending data:', data);
-    
+
         try {
             const response = await axios.post('http://localhost:5000/api/s3/preprocessing', data, {
                 headers: {
@@ -220,48 +271,44 @@ const Analytics = () => {
                 }
             });
             console.log('response:', response);
-    
+            
             setChartData({
                 categories: response.data.categories,
                 data: response.data.data
             });
-            setResponseData({
+            setResponseFerqData({
                 word: response.data.word,
                 freq: response.data.freq,
                 account: response.data.account,
                 initialAuthorsCount: response.data.initial_authors_count,
                 initialPostsCount: response.data.initial_posts_count,
-                FrequencyFile: response.data.output_file_name
+                FrequencyFile: 'freq_'+freqFileName
             });
-            setResponseData({
-                word: response.data.word,
-                freq: response.data.freq,
-                account: response.data.account,
-                initialAuthorsCount: response.data.initial_authors_count,
-                initialPostsCount: response.data.initial_posts_count,
-                FrequencyFile: response.data.output_file_name
-            });
-
-            console.log('chartData:', chartData);
+            setStartConnection(true)
             setRefreshKey(prevKey => prevKey + 1);
             setShowChart(true);
         } catch (error) {
             console.error('Error uploading data:', error);
             setIsProcessing(false);
             setShowChart(false);
+            setStartConnection(false)
+
         }
     };
-    
+
     const handleStart = () => {
         setShowForm(false);
-
         setIsProcessing(true);
         handleStartAnalysis();
+        setShowForm(false);
+        setLoading(false);
+        setUploadFile(false)
     };
 
     const handleNext = () => {
         handleUpFiles();
         setShowForm(true);
+        setLoading(true);
     };
 
     return (
@@ -285,7 +332,13 @@ const Analytics = () => {
                     </Grid>
                 </>
             )}
-            {showForm && (
+            {!uploadFile && loading && (
+                <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                    <CircularProgress aria-label="progress" />
+                </Grid>
+            )}
+
+            {uploadFile && (
                 <>
                     <Grid item xs={12} sm={12} md={12}>
                         <SubCard>
@@ -293,90 +346,90 @@ const Analytics = () => {
                         </SubCard>
                     </Grid>
                     {showPreChart && (
-                    <>
-                    <Grid item xs={12} sm={6} md={6}>
-                        <SubCard title="Number of Posts per Author Grouped by Post Count Ranges">
-                            <ApexColumnChart key={refreshKey} categories={chartPreData.categories} data={chartPreData.data} title="Posts Distribution" colors={["#4994ec"]} />
-                        </SubCard>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6}>
-                        <SubCard title="Number of Words per Author Grouped by Post Count Ranges">
-                            <ApexColumnChart key={refreshKey} categories={chartPreData.categories} data={chartPreData.data} bgColor={"#613cb0"} />
-                        </SubCard>
-                    </Grid>
-                  
-                    <Grid item xs={12} sm={7}>
-                        <SubCard title="Project Details">
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item xs={12} sm={6}>
-                                    <InputLabel>Project Name</InputLabel>
-                                    <TextField
-                                        fullWidth
-                                        placeholder="Enter project name"
-                                        value={projectName}
-                                        onChange={(e) => handleFormChange('projectName', e.target.value)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <InputLabel>Email</InputLabel>
-                                    <TextField
-                                        type="email"
-                                        fullWidth
-                                        placeholder="Email"
-                                        value={email}
-                                        onChange={(e) => handleFormChange('email', e.target.value)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                                        Algorithm Settings:
-                                    </Typography>
-                                    <Grid container spacing={1}>
-                                        <LabelSlider
-                                            min={0.1}
-                                            max={1}
-                                            start={threshold}
-                                            label="Threshold"
-                                            step={0.1}
-                                            onChange={(e, value) => handleFormChange('threshold', value)}
-                                        />
-                                        <LabelSlider
-                                            min={100}
-                                            max={2000}
-                                            start={signature}
-                                            label="Signature"
-                                            color="secondary"
-                                            step={100}
-                                            onChange={(e, value) => handleFormChange('signature', value)}
-                                        />
+                        <>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <SubCard title="Number of Posts per Author Grouped by Post Count Ranges">
+                                    <ApexColumnChart key={refreshKey} categories={chartPreData.categories} data={chartPreData.data} colors={["#4994ec"]} />
+                                </SubCard>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <SubCard title="Number of Words per Author Grouped by Post Count Ranges">
+                                    <ApexColumnChart key={refreshKey} categories={chartWordData.categories} data={chartWordData.data} colors={"#613cb0"} />
+                                </SubCard>
+                            </Grid>
+
+                            <Grid item xs={12} sm={7}>
+                                <SubCard title="Project Details">
+                                    <Grid container spacing={2} alignItems="center">
+                                        <Grid item xs={12} sm={6}>
+                                            <InputLabel>Project Name</InputLabel>
+                                            <TextField
+                                                fullWidth
+                                                placeholder="Enter project name"
+                                                value={projectName}
+                                                onChange={(e) => handleFormChange('projectName', e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <InputLabel>Email</InputLabel>
+                                            <TextField
+                                                type="email"
+                                                fullWidth
+                                                placeholder="Email"
+                                                value={email}
+                                                onChange={(e) => handleFormChange('email', e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                                                Algorithm Settings:
+                                            </Typography>
+                                            <Grid container spacing={1}>
+                                                <LabelSlider
+                                                    min={0.1}
+                                                    max={1}
+                                                    start={threshold}
+                                                    label="Threshold"
+                                                    step={0.1}
+                                                    onChange={(e, value) => handleFormChange('threshold', value)}
+                                                />
+                                                <LabelSlider
+                                                    min={100}
+                                                    max={2000}
+                                                    start={signature}
+                                                    label="Signature"
+                                                    color="secondary"
+                                                    step={100}
+                                                    onChange={(e, value) => handleFormChange('signature', value)}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
+                                </SubCard>
                             </Grid>
-                        </SubCard>
-                    </Grid>    
-                    <Grid item xs={12} sm={5}>
-                        <SubCard title="Preprocessing Settings">
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Switch defaultChecked color="primary" onChange={handleDroppingPunctuationSwitchChange}/>
-                                    Dropping punctuation marks
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Switch color="primary" onChange={handleThresholdSwitchChange} />
-                                    Threshold of posts
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Switch color="primary" onChange={handleThresholdSwitchVocabularyChange} />
-                                    Changing a dictionary for belonging words
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Switch defaultChecked color="primary" onChange={handleDroppingLinksSwitchVocabularyChange} />
-                                    Dropping links
-                                </Grid>
+                            <Grid item xs={12} sm={5}>
+                                <SubCard title="Preprocessing Settings">
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <Switch defaultChecked color="primary" onChange={handleDroppingPunctuationSwitchChange} />
+                                            Dropping punctuation marks
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Switch color="primary" onChange={handleThresholdSwitchChange} />
+                                            Threshold of posts
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Switch color="primary" onChange={handleThresholdSwitchVocabularyChange} />
+                                            Changing a dictionary for belonging words
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Switch defaultChecked color="primary" onChange={handleDroppingLinksSwitchVocabularyChange} />
+                                            Dropping links
+                                        </Grid>
+                                    </Grid>
+                                </SubCard>
                             </Grid>
-                        </SubCard>
-                    </Grid>
-                    </>
+                        </>
                     )}
                     {showThresholdSettings && (
                         <>
@@ -387,9 +440,9 @@ const Analytics = () => {
                                             min={10}
                                             max={100}
                                             start={30}
-                                            label="Acount Threshold"
+                                            label="Account Threshold"
                                             step={1}
-                                            onChange={(e, value) => handleFormChange('acountThreshold', value)}
+                                            onChange={(e, value) => handleFormChange('accountThreshold', value)}
                                         />
                                         <LabelSlider
                                             min={1000}
@@ -435,7 +488,7 @@ const Analytics = () => {
                                     onDelete={handleDelete}
                                     onAddRow={handleAddRow}
                                     setVocabulary={setVocabulary}
-                                    />
+                                />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TableBasic
@@ -481,7 +534,7 @@ const Analytics = () => {
                     </Grid>
                     <Grid item xs={12} md={6} lg={6}>
                         <MainCard title="Highest frequency of words 11-20">
-                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(10, 20)} data={chartData.data.slice(10, 20)} bgColor={"#613cb0"}/>
+                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(10, 20)} data={chartData.data.slice(10, 20)} bgColor={"#613cb0"} />
                         </MainCard>
                     </Grid>
                 </>
@@ -489,6 +542,5 @@ const Analytics = () => {
         </Grid>
     );
 };
-    
 
 export default Analytics;

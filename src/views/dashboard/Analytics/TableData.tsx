@@ -15,7 +15,10 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TableSortLabel from '@mui/material/TableSortLabel';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
@@ -30,10 +33,12 @@ import axios from 'axios';
 // table data
 type CreateDataType = {
     name: string;
+    id?: string;
+    date_created?: string;
 };
 
-function createData(name: string): CreateDataType {
-    return { name };
+function createData(name: string, id: string, date_created: string): CreateDataType {
+    return { name, id, date_created };
 }
 
 // table filter
@@ -67,7 +72,7 @@ const headCells = [
     {
         id: 'name',
         numeric: false,
-        label: 'Word'
+        label: 'Name'
     }
 ];
 
@@ -168,7 +173,6 @@ interface EnhancedTableProps {
     onDelete: (namesToDelete: string[]) => void;
     onAddRow: (newWord: string) => void;
     setVocabulary: (newWord: string) => void;
-
 }
 
 export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocabulary }: EnhancedTableProps) {
@@ -178,6 +182,9 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const [rows, setRows] = useState<CreateDataType[]>([]);
     const [dense] = useState(false);
     const [selectedValue, setSelectedValue] = useState<CreateDataType[]>([]);
+    const [open, setOpen] = useState(false);
+    const [vocabularies, setVocabularies] = useState<CreateDataType[]>([]);
+    const [selectedVocabId, setSelectedVocabId] = useState<string | null>(null);
 
     useEffect(() => {
         if (vocabulary) {
@@ -237,58 +244,62 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     const handleSaveChanges = async () => {
-        const data ={
-             terms: vocabulary,
-             name: "roni",
-             is_default: false
+        const data = {
+            terms: vocabulary,
+            name: "roni",
+            is_default: false
         }
         console.log(data)
         try {
             const response = await axios.post('http://localhost:5000/api/vocabularies/', data, {
                 headers: {
-                    'Content-Type': 'application/json'                }
+                    'Content-Type': 'application/json'
+                }
             });
         } catch (error) {
-
+            console.error('Error saving changes:', error);
         }
         console.log('Save changes:', selectedValue);
     };
 
     const handleGetAllStopWords = async () => {
-
         try {
             const response = await axios.get('http://localhost:5000/api/vocabularies/', {
                 headers: {
-                    'Content-Type': 'application/json' }
+                    'Content-Type': 'application/json'
+                }
             });
-
-            console.log(response.data)
+            const vocabData = response.data.map((vocabulary: any) => createData(vocabulary.name, vocabulary._id, vocabulary.date_modified));
+            setVocabularies(vocabData);
+            setOpen(true);
         } catch (error) {
-
+            console.error('Error fetching vocabularies:', error);
         }
-        console.log('Save changes:', selectedValue);
     };
 
-    // const handleGetStopWords = async () => {
-    //     const id = "6650de2ae522e815cbc20a1f";
-    //     try {
-    //         const response = await axios.get(`http://localhost:5000/api/vocabularies/${id}`, {
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    //         const terms = response.data.terms;
-    //         setVocabulary(vocabulary.: terms);
-    //         console.log('Terms:', terms);
-    //     } catch (error) {
-    //         console.error('Error fetching stop words:', error);
-    //     }
-    //     console.log('Get stop words completed.');
-    // };
+    const handleClose = () => {
+        setOpen(false);
+    };
 
+    const handleVocabClick = (id: string) => {
+        setSelectedVocabId(id);
+    };
 
-
-
+    const handleSelect = async () => {
+        if (selectedVocabId) {
+            try {
+                const response = await axios.post('http://localhost:5000/api/selected_vocabulary/', { id: selectedVocabId }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                console.log('Selected vocabulary:', response.data);
+            } catch (error) {
+                console.error('Error selecting vocabulary:', error);
+            }
+            setOpen(false);
+        }
+    };
 
     return (
         <MainCard
@@ -347,16 +358,69 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 2 }}>
+
+                <Stack direction="row" spacing={2}>
                     <Button variant="contained" color="primary" onClick={handleSaveChanges}>
                         Create Stop Words
-                    </Button> 
-                    <Button variant="contained" color="primary" onClick={handleGetAllStopWords}>
-                        get
                     </Button>
-
-                </Box>
+                    <Button variant="contained" color="secondary" onClick={handleGetAllStopWords}>
+                        Get Stop Words
+                    </Button>
+                </Stack>
             </Paper>
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Vocabularies</DialogTitle>
+                <DialogContent>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell padding="checkbox">
+                                        <Checkbox
+                                            indeterminate={selectedVocabId !== null}
+                                            checked={selectedVocabId !== null}
+                                            inputProps={{
+                                                'aria-label': 'select all vocabularies'
+                                            }}
+                                        />
+                                    </TableCell>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Date Created</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {vocabularies.map((vocabulary, index) => (
+                                    <TableRow
+                                        key={index}
+                                        onClick={() => handleVocabClick(vocabulary.id!)}
+                                        selected={selectedVocabId === vocabulary.id}
+                                    >
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                checked={selectedVocabId === vocabulary.id}
+                                                inputProps={{
+                                                    'aria-labelledby': `vocabulary-${index}`
+                                                }}
+                                            />
+                                        </TableCell>
+                                        <TableCell id={`vocabulary-${index}`}>{vocabulary.name}</TableCell>
+                                        <TableCell>{vocabulary.date_created}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Close
+                    </Button>
+                    <Button onClick={handleSelect} color="primary">
+                        Select
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </MainCard>
     );
 }
