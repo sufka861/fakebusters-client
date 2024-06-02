@@ -22,6 +22,7 @@ export interface UploadProps extends DropzoneOptions {
     file: CustomFile[] | null;
     setFieldValue: (field: string, value: any) => void;
     sx?: SxProps<Theme>;
+    fileRef?: React.MutableRefObject<File | null>;
 }
 
 export interface UploadMultiFileProps extends DropzoneOptions {

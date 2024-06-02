@@ -13,6 +13,7 @@ import PlaceholderContent from './PlaceHolderContent';
 
 // types
 import { CustomFile, UploadProps } from 'types/dropzone';
+import { Typography } from '@mui/material';
 
 const DropzoneWrapper = styled('div')(({ theme }) => ({
     outline: 'none',
@@ -28,42 +29,30 @@ const DropzoneWrapper = styled('div')(({ theme }) => ({
 
 // ==============================|| UPLOAD - SINGLE FILE ||============================== //
 
-const SingleFileUpload = ({ error, file, setFieldValue, sx, ...other }: UploadProps) => {
+const SingleFileUpload = ({ error, file, setFieldValue, fileRef, sx, ...other }: UploadProps) => {
     const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
         accept: {
-            'image/*': []
+            'text/csv': ['.csv']
         },
         multiple: false,
         onDrop: (acceptedFiles: CustomFile[]) => {
-            setFieldValue(
-                'files',
-                acceptedFiles.map((file: CustomFile) =>
-                    Object.assign(file, {
-                        preview: URL.createObjectURL(file)
-                    })
-                )
+            const updatedFiles = acceptedFiles.map((file: CustomFile) =>
+                Object.assign(file, {
+                    preview: URL.createObjectURL(file)
+                })
             );
+            setFieldValue('files', updatedFiles);
+            if (fileRef) {
+                fileRef.current = acceptedFiles[0];
+            }
         }
     });
 
-    const thumbs =
-        file &&
-        file.map((item: CustomFile) => (
-            <Box sx={{ bgcolor: 'background.paper', top: 8, left: 8, borderRadius: 2, position: 'absolute', width: 1, height: 1 }}>
-                <img
-                    key={item.name}
-                    alt={item.name}
-                    src={item.preview}
-                    style={{ width: 'calc(100% - 16px)', height: 'calc(100% - 16px)' }}
-                    onLoad={() => {
-                        URL.revokeObjectURL(item.preview!);
-                    }}
-                />
-            </Box>
-        ));
-
     const onRemove = () => {
         setFieldValue('files', null);
+        if (fileRef) {
+            fileRef.current = null;
+        }
     };
 
     return (
@@ -78,10 +67,7 @@ const SingleFileUpload = ({ error, file, setFieldValue, sx, ...other }: UploadPr
             >
                 <input {...getInputProps()} />
                 <PlaceholderContent />
-                {thumbs}
             </DropzoneWrapper>
-
-            {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
 
             {file && file.length > 0 && (
                 <Stack direction="row" justifyContent="flex-end" sx={{ mt: 1.5 }}>
@@ -90,6 +76,14 @@ const SingleFileUpload = ({ error, file, setFieldValue, sx, ...other }: UploadPr
                     </Button>
                 </Stack>
             )}
+
+            {file && file.length > 0 && (
+                <Box sx={{ mt: 1 }}>
+                    <Typography variant="body1">{file[0].name}</Typography>
+                </Box>
+            )}
+
+            {fileRejections.length > 0 && <RejectionFiles fileRejections={fileRejections} />}
         </Box>
     );
 };

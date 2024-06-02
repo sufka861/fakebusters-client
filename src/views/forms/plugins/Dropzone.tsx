@@ -76,7 +76,7 @@ const Dropzone = ({ filesRef }) => {
             </Grid>
             {/* theme.palette.grey[300] */}
             <Grid item xs={12}>
-                <MainCard title="Upload Single File">
+                <MainCard title="Upload CSV File">
                     <Formik
                         initialValues={{ files: null }}
                         onSubmit={(values: any) => {

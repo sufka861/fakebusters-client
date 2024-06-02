@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import {
     IconButton, Stack, Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Tooltip, InputAdornment, TextField, Collapse, Box, TableSortLabel, Select, MenuItem, Typography
+    TableHead, TableRow, Tooltip, InputAdornment, TextField, Collapse, Box, TableSortLabel, Select, MenuItem, Typography, Button
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { IconInfoCircleFilled } from '@tabler/icons-react';
 import InfoIcon from '@mui/icons-material/Info';
+import { CSVLink } from 'react-csv';
+import { CSVExport } from 'views/forms/tables/TableExports';
 
 export interface NodeUser {
   id: number;
@@ -30,7 +32,6 @@ interface NodeTableProps {
 function NodeTable({ nodes }: NodeTableProps) {
   const theme = useTheme();
   const [sortConfig, setSortConfig] = useState<{ key: keyof NodeUser; direction: 'asc' | 'desc' } | null>(null);
-  const [verifiedSelections, setVerifiedSelections] = useState<{ [key: number]: string }>({});
   const [filter, setFilter] = useState<string>('');
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,22 +65,38 @@ function NodeTable({ nodes }: NodeTableProps) {
     setSortConfig({ key, direction });
   };
 
+  // CSV headers
+  const headers = [
+    { label: "Username", key: "label" },
+    { label: "Degree Centrality", key: "degree_centrality" },
+    { label: "In Degree Centrality", key: "in_degree_centrality" },
+    { label: "Out Degree Centrality", key: "out_degree_centrality" },
+    { label: "Betweenness Centrality", key: "betweenness_centrality" },
+    { label: "Closeness Centrality", key: "closeness_centrality" },
+    // { label: "Eigenvector Centrality", key: "eigen_centrality" },
+    { label: "Clustering Coefficient", key: "clustering_coefficient" },
+    { label: "PageRank", key: "page_rank" },
+    { label: "Eccentricity", key: "eccentricity" }
+  ];
+
   return (
     <>
-      <TextField
-        variant="outlined"
-        placeholder="Filter results..."
-        margin="normal"
-        fullWidth
-        onChange={handleFilterChange}
-        InputProps={{
-            startAdornment: (
-                <InputAdornment position="start">
-                    <SearchIcon />
-                </InputAdornment>
-            ),
-        }}
-      />
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <TextField
+          variant="outlined"
+          placeholder="Filter results..."
+          margin="normal"
+          onChange={handleFilterChange}
+          InputProps={{
+              startAdornment: (
+                  <InputAdornment position="start">
+                      <SearchIcon />
+                  </InputAdornment>
+              ),
+          }}
+        />
+            <CSVExport data={sortedData} filename={'nodes-analysis.csv'} header={headers} />
+      </Stack>
       <TableContainer>
         <Table>
           <TableHead>
@@ -124,13 +141,13 @@ function NodeTable({ nodes }: NodeTableProps) {
                 </TableSortLabel>
                 </Tooltip>
               </TableCell>
-              <TableCell onClick={() => requestSort('eigen_centrality')}>
+              {/* <TableCell onClick={() => requestSort('eigen_centrality')}>
               <Tooltip title="Importance of a profile based on connections and its influence within a network">
                 <TableSortLabel active={sortConfig?.key === 'eigen_centrality'} direction={sortConfig?.direction}>
                   Eigenvector Centrality
                 </TableSortLabel>
                 </Tooltip>
-              </TableCell>
+              </TableCell> */}
               <TableCell onClick={() => requestSort('clustering_coefficient')}>
               <Tooltip title="How well a profile's followers are connected to each other (community)">
                 <TableSortLabel active={sortConfig?.key === 'clustering_coefficient'} direction={sortConfig?.direction}>
@@ -163,7 +180,7 @@ function NodeTable({ nodes }: NodeTableProps) {
                 <TableCell>{node.out_degree_centrality}</TableCell>
                 <TableCell>{node.betweenness_centrality}</TableCell>
                 <TableCell>{node.closeness_centrality}</TableCell>
-                <TableCell>{node.eigen_centrality}</TableCell>
+                {/* <TableCell>{node.eigen_centrality}</TableCell> */}
                 <TableCell>{node.clustering_coefficient}</TableCell>
                 <TableCell>{node.page_rank}</TableCell>
                 <TableCell>{node.eccentricity}</TableCell>

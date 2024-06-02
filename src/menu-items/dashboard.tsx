@@ -49,7 +49,7 @@ const dashboard: NavItemType = {
         },
         {
             id: 'structure',
-            title: <FormattedMessage id="Structure Analysis" />,
+            title: <FormattedMessage id="Network Analysis" />,
             type: 'item',
             url: '/dashboard/structure',
             icon: icons.IconGraph,
