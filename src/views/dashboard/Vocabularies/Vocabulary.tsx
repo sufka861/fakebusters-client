@@ -23,8 +23,8 @@ const Vocabulary: React.FC<VocabularyProps> = ({ name, date_modified, terms }) =
   const handleClose = () => setOpen(false);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} style={{ position: 'relative' }}>
+    <Grid container spacing={2} >
+      <Grid item xs={12} style={{ position: 'relative' }}  >
         <Typography variant="h4">{name}</Typography>
         <List>
           {terms.slice(0, 5).map((term, index) => (
@@ -33,7 +33,7 @@ const Vocabulary: React.FC<VocabularyProps> = ({ name, date_modified, terms }) =
             </ListItem>
           ))}
         </List>
-        {terms.length > 5 && (
+        {terms.length && (
           <IconButton
             style={{ position: 'absolute', top: 0, right: 0 }}
             onClick={handleOpen}
@@ -41,10 +41,11 @@ const Vocabulary: React.FC<VocabularyProps> = ({ name, date_modified, terms }) =
             <MoreVertIcon />
           </IconButton>
         )}
-        <Typography variant="subtitle2" style={{ position: 'absolute', bottom: 0, right: 0, margin: '8px' }}>
+        <Typography variant="subtitle2" style={{ position: 'absolute', bottom: 0, right: 0 }}>
           Modified: {date_modified}
         </Typography>
       </Grid>
+      
 
       <Modal open={open} onClose={handleClose}>
         <Paper
@@ -53,7 +54,7 @@ const Vocabulary: React.FC<VocabularyProps> = ({ name, date_modified, terms }) =
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: '50%',
             maxHeight: '80vh',
             overflowY: 'auto',
             padding: '20px',
@@ -72,6 +73,7 @@ const Vocabulary: React.FC<VocabularyProps> = ({ name, date_modified, terms }) =
         </Paper>
       </Modal>
     </Grid>
+   
   );
 };
 

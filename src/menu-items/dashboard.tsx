@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff } from '@tabler/icons-react';
+import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff,IconGraph } from '@tabler/icons-react';
 
 // type
 import { NavItemType } from 'types';
@@ -11,7 +11,8 @@ const icons = {
     IconDashboard: IconDashboard,
     IconDeviceAnalytics: IconDeviceAnalytics,
     IconClipboardList:IconClipboardList,
-    IconBookFilled:IconBookOff
+    IconBookFilled:IconBookOff,
+    IconGraph:IconGraph
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -44,6 +45,14 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/results',
             icon: icons.IconClipboardList,
+            breadcrumbs: false
+        },
+        {
+            id: 'structure',
+            title: <FormattedMessage id="Network Analysis" />,
+            type: 'item',
+            url: '/dashboard/structure',
+            icon: icons.IconGraph,
             breadcrumbs: false
         },
         {
