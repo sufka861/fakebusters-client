@@ -12,14 +12,14 @@ function ReportCards({ responseFerqData }) {
     return (
         <>
             <Grid item xs={12} lg={3} sm={6}>
-                <Tooltip title="The total number of words found during the initial data processing." enterTouchDelay={0}>
+                <Tooltip title="Sum of terms found during the initial data processing." enterTouchDelay={0}>
                     <div>
-                        <ReportCard primary={responseFerqData.word} secondary="Words" color="secondary.main" iconPrimary={AssessmentOutlinedIcon} />
+                        <ReportCard primary={responseFerqData.word} secondary="Terms count" color="secondary.main" iconPrimary={AssessmentOutlinedIcon} />
                     </div>
                 </Tooltip>
             </Grid>
             <Grid item xs={12} lg={3} sm={6}>
-                <Tooltip title="The total count of posts that were examined." enterTouchDelay={0}>
+                <Tooltip title="Sum of posts that were examined." enterTouchDelay={0}>
                     <div>
                         <ReportCard primary={responseFerqData.initialPostsCount} secondary="Posts" color="error.main" iconPrimary={CalendarTodayOutlinedIcon} />
                     </div>
@@ -28,15 +28,15 @@ function ReportCards({ responseFerqData }) {
             <Grid item xs={12} lg={3} sm={6}>
     <Tooltip title={`Represents the size of the dataset processed by the LPA algorithm. Average per account: ${(responseFerqData.freq / responseFerqData.account).toFixed(2)} Words.`} enterTouchDelay={0}>
         <div>
-            <ReportCard primary={responseFerqData.freq} secondary="Frequency Lines" color="success.dark" iconPrimary={DescriptionTwoToneIcon} />
+            <ReportCard primary={responseFerqData.freq} secondary="Term Frequency Size" color="success.dark" iconPrimary={DescriptionTwoToneIcon} />
         </div>
     </Tooltip>
 </Grid>
 
             <Grid item xs={12} lg={3} sm={6}>
-                <Tooltip title="Average number of accounts examined - accounts that published over 30 posts." enterTouchDelay={0}>
+                <Tooltip title="Fraction of accounts that proceed to the LPA - accounts that match the preprocessing filters" enterTouchDelay={0}>
                     <div>
-                        <ReportCard primary={`${responseFerqData.account}/${responseFerqData.initialAuthorsCount}`} secondary="Accounts" color="primary.main" iconPrimary={AccountCircleTwoTone} />
+                        <ReportCard primary={`${responseFerqData.account}/${responseFerqData.initialAuthorsCount}`} secondary="Processed Accounts / Total Accounts" color="primary.main" iconPrimary={AccountCircleTwoTone} />
                     </div>
                 </Tooltip>
             </Grid>

@@ -90,13 +90,12 @@ const Results = () => {
                 <DetailsAnalyst />
             </Grid>
             <Grid item xs={12}>
-                {/* <UserList resultsLPA={resultsLPA} /> */}
                 <MainCard title="SockPuppet Distance">
                     <ResultsLPA resultsLPA={resultsLPA} />
                 </MainCard>
 
             </Grid>
-    
+
             <Grid item xs={12} md={6} lg={6}>
                 <MainCard title="Highest frequency of words 1-10">
                     <ApexBarChart key={refreshKey} categories={chartData.categories.slice(1, 11)} data={chartData.data.slice(0, 10)} bgColor={"#613cb0"} />

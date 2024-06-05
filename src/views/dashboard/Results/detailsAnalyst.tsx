@@ -58,7 +58,7 @@ const DetailsAnalyst = () => {
                 All accounts: <Typography component="span" variant="body2">{responseFerqData.initiaAuthorsCount}</Typography>
                 </Typography>
                 <Typography variant="subtitle1">
-                Amount of posts: <Typography component="span" variant="body2">{responseFerqData.initialPostsCount}</Typography>
+                Total posts: <Typography component="span" variant="body2">{responseFerqData.initialPostsCount}</Typography>
                 </Typography>
               </Stack>
               <Box height={27} /> 

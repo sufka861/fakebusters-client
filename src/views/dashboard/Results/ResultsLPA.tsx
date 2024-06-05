@@ -148,8 +148,8 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                     Username 2
                                 </TableSortLabel>
                             </TableCell>
-                            <TableCell onClick={() => requestSort('Value')}>
-                                <TableSortLabel active={sortConfig?.key === 'Value'} direction={sortConfig?.direction}>
+                            <TableCell onClick={() => requestSort('value')}>
+                                <TableSortLabel active={sortConfig?.key === 'value'} direction={sortConfig?.direction}>
                                     SockPuppet Distance
                                 </TableSortLabel>
                             </TableCell>
