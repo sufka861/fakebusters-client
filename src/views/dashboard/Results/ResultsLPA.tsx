@@ -174,7 +174,7 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                 >
                                     <TableCell>{row["Corpus 1"]}</TableCell>
                                     <TableCell>{row["Corpus 2"]}</TableCell>
-                                    <TableCell>{row["Value"]}</TableCell>
+                                    <TableCell>{row["value"]}</TableCell>
                                     <TableCell>
                                         <Select
                                             value={verifiedSelections[index] || 'no'}
