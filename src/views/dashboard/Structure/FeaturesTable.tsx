@@ -169,15 +169,17 @@ const EnhancedTableToolbar = ({ numSelected, selected }: { numSelected: number; 
 // ==============================|| TABLE - ENHANCED ||============================== //
 interface FeaturesTableProps {
     graphData: any;
+
 }
 
-export default function FeaturesTable({ graphData }: FeaturesTableProps) {
+export default function FeaturesTable({ graphData  }: FeaturesTableProps) {
     const [order, setOrder] = React.useState<ArrangementOrder>('asc');
     const [orderBy, setOrderBy] = React.useState('feature');
     const [selected, setSelected] = React.useState<string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense] = React.useState(true);
     const [rowsPerPage, setRowsPerPage] = React.useState(8);
+    const [cosineSimilarityData,setCosineSimilarityData] = React.useState([]);
     const [selectedValue, setSelectedValue] = React.useState([]);
     const [showResults, setShowResults] = React.useState<boolean>(false);
 
@@ -221,9 +223,8 @@ export default function FeaturesTable({ graphData }: FeaturesTableProps) {
 
     const handleSubmit = async () => {
         const selectedFeatures = selected.map((feature) => feature.toLowerCase().replace(/\s+/g, '_'));
-        console.log(selectedFeatures);
         try {
-            const response = await fetch('http://localhost:5000/similarity', {
+            const response = await fetch('https://graphs-analysis.onrender.com/similarity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -232,7 +233,7 @@ export default function FeaturesTable({ graphData }: FeaturesTableProps) {
             });
             const result = await response.json();
             setShowResults(true);
-            setSelectedValue(result.similarity);
+            setCosineSimilarityData(result.similarity);
             console.log('Similarity Results:', result);
         } catch (error) {
             console.error('Error submitting features:', error);
@@ -305,14 +306,14 @@ export default function FeaturesTable({ graphData }: FeaturesTableProps) {
 
             <Box sx={{ m: 2 }}>
                 <Button variant="contained" color="primary" onClick={handleSubmit}>
-                    Send
+                Calculate Cosine Similarity
                 </Button>
             </Box>
              </MainCard>
             }
 
             <Box sx={{ m: 2 }}>
-                {showResults && <CosineSimilararityResults similarityData={selectedValue} selectedFeatures={selected} />}
+                {showResults && <CosineSimilararityResults similarityData={cosineSimilarityData} />}
             </Box>
         </MainCard>
         
