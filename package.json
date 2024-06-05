@@ -102,6 +102,7 @@
     },
     "scripts": {
         "start": "vite",
+        "dev": "vite dev",
         "build": "vite build",
         "build-stage": "env-cmd -f .env.qa vite build",
         "preview": "vite preview",
