@@ -22,7 +22,7 @@ function Statistics({ graphData }: StatisticsProps) {
 
     useEffect(() => {
         // Fetch nodes data from server
-        fetch('http://localhost:5000/stats', {
+        fetch('https://fakebusters-server.onrender.com/stats', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

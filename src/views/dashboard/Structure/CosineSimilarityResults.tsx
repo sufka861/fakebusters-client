@@ -12,10 +12,9 @@ import { CSVExport } from '../../forms/tables/TableExports';
 
 interface CosineSimilarityResultsProps {
   similarityData: { node1: number; node2: number; similarity: number }[];
-  selectedFeatures: string[];
 }
 
-const CosineSimilarityResults = ({ similarityData, selectedFeatures }: CosineSimilarityResultsProps) => {
+const CosineSimilarityResults = ({ similarityData }: CosineSimilarityResultsProps) => {
   return (
     <Paper>
        <CSVExport data={similarityData} filename={'cosine-similarity.csv'} />

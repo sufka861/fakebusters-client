@@ -18,13 +18,16 @@ const Graphs: React.FC<GraphsProps> = ({ graphData }) => {
         <Grid container spacing={gridSpacing}>
             {graphData && (
                 <>
+                 <Grid item xs={12} md={6}>
                     <MainCard title="Follow Connections">
                         <GraphA nodes={graphData.nodes} edges={graphData.edges} />
                     </MainCard>
-                    {/* <Grid item xs={12} md={6}> */}
+                    </Grid>
+                    <Grid item xs={12} md={6}>
                     <MainCard title="Followed By Connections">
                         <GraphA nodes={graphData.nodes} edges={reverseEdges(graphData.edges)} />
                     </MainCard>
+                    </Grid>
                 </>
             )}
         </Grid>

@@ -40,7 +40,7 @@ function a11yProps(index: number) {
 const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     const theme = useTheme();
     const { mode } = useConfig();
-
+    const [cosineSimilarityData, setCosineSimilarityData] = useState([]);
     const [tabValue, setTabValue] = useState(0);
     const [graphData, setGraphData] = useState(null);
 
@@ -117,7 +117,7 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
                                 <Stack spacing={1}>
                                     {tabValue === 0 && graphData && <Graphs graphData={graphData} />}
                                     {tabValue === 1 && graphData && <Statistics graphData={graphData} />}
-                                    {tabValue === 2 && graphData && <FeaturesTable graphData={graphData}/>}
+                                    {tabValue === 2 && graphData && <FeaturesTable graphData={graphData}  />}
                                 </Stack>
                             </Stack>
                         </Grid>
