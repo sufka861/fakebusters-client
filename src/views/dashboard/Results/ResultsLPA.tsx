@@ -39,7 +39,7 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
     const [verifiedSelections, setVerifiedSelections] = useState<{ [key: number]: string }>({});
     const [comments, setComments] = useState<{ [key: number]: string }>({});
-    const [profileData, setProfileData] = useState<{ [key: string]: ProfileData }>({});
+    const [profileData, setProfileData] = useState<{ [key: string]: ProfileData | string }>({});
 
     const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value.toLowerCase());
@@ -49,24 +49,34 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         if (!profileData[username]) {
             try {
                 const response = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
-                const data = response.data[0].data[0];
-                setProfileData(prev => ({
-                    ...prev,
-                    [username]: {
-                        username: data.username,
-                        description: data.description,
-                        followers_count: data.public_metrics.followers_count,
-                        following_count: data.public_metrics.following_count,
-                        tweet_count: data.public_metrics.tweet_count,
-                        listed_count: data.public_metrics.listed_count,
-                        like_count: data.public_metrics.like_count,
-                        verified: data.verified,
-                        verified_type: data.verified_type,
-                        profile_image_url: data.profile_image_url,
-                        created_at: data.created_at,
-                        name: data.name
+                const data = response.data[0];
+                if (data.errors) {
+                    console.log(`Errors for ${username}:`, data.errors);
+                    if (data.errors[0].title === "Not Found Error") {
+                        setProfileData(prev => ({ ...prev, [username]: 'User not found' }));
+                    } else if (data.errors[0].title === "Forbidden") {
+                        setProfileData(prev => ({ ...prev, [username]: 'User suspended' }));
                     }
-                }));
+                } else {
+                    const profile = data.data[0];
+                    setProfileData(prev => ({
+                        ...prev,
+                        [username]: {
+                            username: profile.username,
+                            description: profile.description,
+                            followers_count: profile.public_metrics.followers_count,
+                            following_count: profile.public_metrics.following_count,
+                            tweet_count: profile.public_metrics.tweet_count,
+                            listed_count: profile.public_metrics.listed_count,
+                            like_count: profile.public_metrics.like_count,
+                            verified: profile.verified,
+                            verified_type: profile.verified_type,
+                            profile_image_url: profile.profile_image_url,
+                            created_at: profile.created_at,
+                            name: profile.name
+                        }
+                    }));
+                }
             } catch (error) {
                 console.error('Error fetching profile data:', error);
             }
@@ -118,6 +128,70 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         setComments(prev => ({ ...prev, [index]: value }));
     };
 
+    const renderProfileData = (username: string) => {
+        if (typeof profileData[username] === 'string') {
+            return <Typography>{profileData[username]}</Typography>;
+        } else if (profileData[username]) {
+            return (
+                <Table>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>{profileData[username]?.name}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Username</TableCell>
+                            <TableCell>{profileData[username]?.username}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Description</TableCell>
+                            <TableCell>{profileData[username]?.description}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Followers</TableCell>
+                            <TableCell>{profileData[username]?.followers_count}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Following</TableCell>
+                            <TableCell>{profileData[username]?.following_count}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Tweets</TableCell>
+                            <TableCell>{profileData[username]?.tweet_count}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Likes</TableCell>
+                            <TableCell>{profileData[username]?.like_count}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Listed</TableCell>
+                            <TableCell>{profileData[username]?.listed_count}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Verified</TableCell>
+                            <TableCell>{profileData[username]?.verified ? 'Yes' : 'No'}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Verified Type</TableCell>
+                            <TableCell>{profileData[username]?.verified_type}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Profile Image</TableCell>
+                            <a href={`https://x.com/${profileData[username]?.username}`} target="_blank" rel="noreferrer">
+                                <TableCell><img src={profileData[username]?.profile_image_url} alt="Profile" width="50" height="50" /></TableCell>
+                            </a>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Created At</TableCell>
+                            <TableCell>{profileData[username]?.created_at}</TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            );
+        }
+        return <Typography>Loading profile data...</Typography>;
+    };
+
     return (
         <>
             <TextField
@@ -162,34 +236,31 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                         {sortedData.map((row, index) => (
                             <React.Fragment key={index}>
                                 <TableRow
-                                    // hover
                                     onClick={() => handleRowClick(index, row["Corpus 1"], row["Corpus 2"])}
-                                    // sx={{
-                                    //     backgroundColor: '#d3d3d3',
-                                    //     '&:hover': {
-                                    //         backgroundColor: '#A9A9A9',
-                                    //     },
-                                    //     transition: 'background-color 0.3s ease',
-                                    // }}
+                                    hover
+                                    style={{ cursor: 'pointer' }}
                                 >
                                     <TableCell>{row["Corpus 1"]}</TableCell>
                                     <TableCell>{row["Corpus 2"]}</TableCell>
-                                    <TableCell>{row["value"]}</TableCell>
+                                    <TableCell>{row.value}</TableCell>
                                     <TableCell>
                                         <Select
-                                            value={verifiedSelections[index] || 'no'}
-                                            onChange={(e) => handleVerifiedChange(index, e.target.value as string)}
+                                            value={verifiedSelections[index] || ""}
+                                            onChange={(e) => handleVerifiedChange(index, e.target.value)}
+                                            displayEmpty
                                             fullWidth
                                         >
-                                            <MenuItem value="no">No</MenuItem>
-                                            <MenuItem value="sockpuppet">Sockpuppet</MenuItem>
-                                            <MenuItem value="innocent">Innocent</MenuItem>
+                                            <MenuItem value="">N/A</MenuItem>
+                                            <MenuItem value="verified">Verified</MenuItem>
+                                            <MenuItem value="unverified">Unverified</MenuItem>
                                         </Select>
                                     </TableCell>
                                     <TableCell>
                                         <TextField
-                                            value={comments[index] || ''}
+                                            value={comments[index] || ""}
                                             onChange={(e) => handleCommentChange(index, e.target.value)}
+                                            variant="outlined"
+                                            size="small"
                                             fullWidth
                                         />
                                     </TableCell>
@@ -200,89 +271,26 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                    <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
                                         <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
                                             <Box margin={1}>
-                                                {profileData[row["Corpus 1"]] && profileData[row["Corpus 2"]] ? (
-                                                    <TableContainer>
-                                                        <Table>
-                                                            <TableHead>
-                                                                <TableRow>
-                                                                    <TableCell>Parameter</TableCell>
-                                                                    <TableCell>{row["Corpus 1"]}</TableCell>
-                                                                    <TableCell>{row["Corpus 2"]}</TableCell>
-                                                                </TableRow>
-                                                            </TableHead>
-                                                            <TableBody>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Profile Image</TableCell>
-                                                                    <TableCell>
-                                                                        <a href={`https://x.com/${row["Corpus 1"]}`} target="_blank" rel="noopener noreferrer">
-                                                                            <img src={profileData[row["Corpus 1"]].profile_image_url} alt="Profile" width={80} />
-                                                                        </a>
-                                                                    </TableCell>
-                                                                    <TableCell>
-                                                                        <a href={`https://x.com/${row["Corpus 2"]}`} target="_blank" rel="noopener noreferrer">
-                                                                            <img src={profileData[row["Corpus 2"]].profile_image_url} alt="Profile" width={80} />
-                                                                        </a>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Created At</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].created_at}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].created_at}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Name</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].name}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].name}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Description</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].description}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].description}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Followers Count</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].followers_count}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].followers_count}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Following Count</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].following_count}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].following_count}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Tweet Count</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].tweet_count}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].tweet_count}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Listed Count</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].listed_count}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].listed_count}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Like Count</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].like_count}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].like_count}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#fff', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Verified</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].verified ? 'Yes' : 'No'}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].verified ? 'Yes' : 'No'}</TableCell>
-                                                                </TableRow>
-                                                                <TableRow sx={{ backgroundColor: '#f9f9f9', borderBottom: '1px solid #ddd' }}>
-                                                                    <TableCell>Verified Type</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 1"]].verified_type}</TableCell>
-                                                                    <TableCell>{profileData[row["Corpus 2"]].verified_type}</TableCell>
-                                                                </TableRow>
-                                                            </TableBody>
-                                                        </Table>
-                                                    </TableContainer>
-                                                ) : (
-                                                    <Typography>Loading profile data...</Typography>
-                                                )}
+                                                <Typography variant="h6" gutterBottom component="div">
+                                                    Profile Details
+                                                </Typography>
+                                                <TableContainer>
+                                                    <Table>
+                                                        <TableBody>
+                                                            <TableRow>
+                                                                <TableCell>{row["Corpus 1"]}</TableCell>
+                                                                <TableCell colSpan={2}>{renderProfileData(row["Corpus 1"])}</TableCell>
+                                                            </TableRow>
+                                                            <TableRow>
+                                                                <TableCell>{row["Corpus 2"]}</TableCell>
+                                                                <TableCell colSpan={2}>{renderProfileData(row["Corpus 2"])}</TableCell>
+                                                            </TableRow>
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
                                             </Box>
                                         </Collapse>
                                     </TableCell>
