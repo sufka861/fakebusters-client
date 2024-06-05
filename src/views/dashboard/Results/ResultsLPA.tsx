@@ -10,7 +10,7 @@ import axios from 'axios';
 type ResultLPA = {
     "Corpus 1": string;
     "Corpus 2": string;
-    "Value": string;
+    "value": string;
 };
 
 type ProfileData = {
