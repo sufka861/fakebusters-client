@@ -19,7 +19,8 @@ import {
     Select,
     MenuItem,
     Typography,
-    Button
+    Button,
+    Alert
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import axios from 'axios';
@@ -57,6 +58,8 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
     const [verifiedSelections, setVerifiedSelections] = useState<{ [key: number]: string }>({});
     const [comments, setComments] = useState<{ [key: number]: string }>({});
     const [profileData, setProfileData] = useState<{ [key: string]: ProfileData | string }>({});
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const location = useLocation();
     const state = location.state || {};
@@ -179,12 +182,17 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                     }
                 }
             );
+            setSuccessMessage('Data saved successfully.');
+            setErrorMessage(''); // Clear any previous error message
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Axios error response:', error.response);
+                setErrorMessage('Error saving data: ' + (error.response?.data.message || 'Unknown error.'));
             } else {
                 console.error('Error saving data:', error);
+                setErrorMessage('Error saving data.');
             }
+            setSuccessMessage(''); // Clear any previous success message
         }
     };
 
@@ -239,7 +247,7 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                             <TableCell>Profile Image</TableCell>
                             <a href={`https://x.com/${profileData[username]?.username}`} target="_blank" rel="noreferrer">
                                 <TableCell>
-                                    <img src={profileData[username]?.profile_image_url} alt="Profile" width="50" height="50" />
+                                    <img src={profileData[username]?.profile_image_url} alt="Profile" />
                                 </TableCell>
                             </a>
                         </TableRow>
@@ -251,61 +259,59 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                 </Table>
             );
         }
-        return <Typography>Loading profile data...</Typography>;
+        return <Typography>Loading...</Typography>;
     };
 
     return (
-        <>
+        <div>
+            <TextField
+                label="Filter"
+                value={filter}
+                onChange={handleFilterChange}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon />
+                        </InputAdornment>
+                    )
+                }}
+                fullWidth
+                margin="normal"
+            />
+            {successMessage && <Alert severity="success">{successMessage}</Alert>}
+            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
             <form onSubmit={handleSubmit}>
-                <TextField
-                    variant="outlined"
-                    placeholder="Filter results..."
-                    margin="normal"
-                    fullWidth
-                    onChange={handleFilterChange}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon />
-                            </InputAdornment>
-                        )
-                    }}
-                />
                 <TableContainer>
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell onClick={() => requestSort('Corpus 1')}>
-                                    <TableSortLabel active={sortConfig?.key === 'Corpus 1'} direction={sortConfig?.direction}>
-                                        Username 1
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell onClick={() => requestSort('Corpus 2')}>
-                                    <TableSortLabel active={sortConfig?.key === 'Corpus 2'} direction={sortConfig?.direction}>
-                                        Username 2
-                                    </TableSortLabel>
-                                </TableCell>
-                                <TableCell onClick={() => requestSort('value')}>
-                                    <TableSortLabel active={sortConfig?.key === 'value'} direction={sortConfig?.direction}>
-                                        Distance
-                                    </TableSortLabel>
-                                </TableCell>
+                                {Object.keys(resultsLPA[0]).map((key) => (
+                                    <TableCell key={key}>
+                                        <TableSortLabel
+                                            active={sortConfig?.key === key}
+                                            direction={sortConfig?.direction}
+                                            onClick={() => requestSort(key as keyof ResultLPA)}
+                                        >
+                                            {key}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                ))}
                                 <TableCell>Verified</TableCell>
-                                <TableCell>Comments</TableCell>
-                                <TableCell>Actions</TableCell>
+                                <TableCell>Comment</TableCell>
+                                <TableCell>Expand</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {sortedData.map((row, index) => (
+                            {sortedData.map((item, index) => (
                                 <React.Fragment key={index}>
-                                    <TableRow>
-                                        <TableCell>{row['Corpus 1']}</TableCell>
-                                        <TableCell>{row['Corpus 2']}</TableCell>
-                                        <TableCell>{row.value}</TableCell>
+                                    <TableRow hover onClick={() => handleRowClick(index, item['Corpus 1'], item['Corpus 2'])}>
+                                        <TableCell>{item['Corpus 1']}</TableCell>
+                                        <TableCell>{item['Corpus 2']}</TableCell>
+                                        <TableCell>{item.value}</TableCell>
                                         <TableCell>
                                             <Select
                                                 value={verifiedSelections[index] || 'Not Verified'}
-                                                onChange={(e) => handleVerifiedChange(index, e.target.value as string)}
+                                                onChange={(e) => handleVerifiedChange(index, e.target.value)}
                                             >
                                                 <MenuItem value="Not Verified">Not Verified</MenuItem>
                                                 <MenuItem value="Sockpuppet">Sockpuppet</MenuItem>
@@ -319,37 +325,39 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <IconButton onClick={() => handleRowClick(index, row['Corpus 1'], row['Corpus 2'])}>
-                                                {expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                                            </IconButton>
+                                            <IconButton>{expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
                                         </TableCell>
                                     </TableRow>
-                                    {expandedRow === index && (
-                                        <TableRow>
-                                            <TableCell colSpan={6}>
-                                                <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
-                                                    <Box margin={1}>
-                                                        <Typography variant="h6">Profile Details for {row['Corpus 1']}</Typography>
-                                                        {renderProfileData(row['Corpus 1'])}
-                                                        <Typography variant="h6">Profile Details for {row['Corpus 2']}</Typography>
-                                                        {renderProfileData(row['Corpus 2'])}
+                                    <TableRow>
+                                        <TableCell style={{ padding: 0 }} colSpan={7}>
+                                            <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
+                                                <Box margin={1} display="flex">
+                                                    <Box flex={1}>
+                                                        <Typography variant="h6" gutterBottom component="div">
+                                                            Profile Data for {item['Corpus 1']}
+                                                        </Typography>
+                                                        {renderProfileData(item['Corpus 1'])}
                                                     </Box>
-                                                </Collapse>
-                                            </TableCell>
-                                        </TableRow>
-                                    )}
+                                                    <Box flex={1}>
+                                                        <Typography variant="h6" gutterBottom component="div">
+                                                            Profile Data for {item['Corpus 2']}
+                                                        </Typography>
+                                                        {renderProfileData(item['Corpus 2'])}
+                                                    </Box>
+                                                </Box>
+                                            </Collapse>
+                                        </TableCell>
+                                    </TableRow>
                                 </React.Fragment>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Box marginTop={2}>
-                    <Button variant="contained" color="primary" type="submit">
-                        Save Changes
-                    </Button>
-                </Box>
+                <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
+                    Submit
+                </Button>
             </form>
-        </>
+        </div>
     );
 };
 
