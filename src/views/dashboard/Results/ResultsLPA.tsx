@@ -201,7 +201,7 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
             return <Typography>{profileData[username]}</Typography>;
         } else if (profileData[username]) {
             return (
-                <Table>
+                <Table size="small">
                     <TableBody>
                         <TableRow>
                             <TableCell>Name</TableCell>
