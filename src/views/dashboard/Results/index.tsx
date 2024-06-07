@@ -91,9 +91,10 @@ const Results = () => {
             </Grid>
             <Grid item xs={12}>
                 <MainCard title="SockPuppet Distance">
-                    <ResultsLPA resultsLPA={resultsLPA} />
+                    <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
+                        <ResultsLPA resultsLPA={resultsLPA} />
+                    </Box>
                 </MainCard>
-
             </Grid>
 
             <Grid item xs={12} md={6} lg={6}>
