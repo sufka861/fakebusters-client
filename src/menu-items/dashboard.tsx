@@ -29,23 +29,23 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/default',
             icon: icons.IconDashboard,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'newAnalysis',
-            title: <FormattedMessage id="New Analysis" />,
+            title: <FormattedMessage id="LPA Analysis" />,
             type: 'item',
             url: '/dashboard/analytics',
             icon: icons.IconDeviceAnalytics,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'results',
-            title: <FormattedMessage id="Results" />,
+            title: <FormattedMessage id="LPA Results" />,
             type: 'item',
             url: '/dashboard/results',
             icon: icons.IconClipboardList,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'structure',
@@ -53,7 +53,7 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/structure',
             icon: icons.IconGraph,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'vocabularies',
@@ -61,7 +61,7 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/vocabularies',
             icon: icons.IconBookFilled,
-            breadcrumbs: false
+            breadcrumbs: true
         }
     ]
 };
