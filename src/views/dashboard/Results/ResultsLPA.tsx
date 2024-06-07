@@ -278,8 +278,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                 fullWidth
                 margin="normal"
             />
-            {successMessage && <Alert severity="success">{successMessage}</Alert>}
-            {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
             <form onSubmit={handleSubmit}>
                 <TableContainer>
                     <Table>
@@ -353,9 +351,13 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <Button type="submit" variant="contained" color="primary" sx={{ marginTop: 2 }}>
-                    Submit
-                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" sx={{ marginRight: 1 }}>
+                        Submit
+                    </Button>
+                    {successMessage && <Alert severity="success">{successMessage}</Alert>}
+                    {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+                </Box>
             </form>
         </div>
     );
