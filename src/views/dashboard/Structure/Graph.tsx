@@ -39,8 +39,6 @@ export default function GraphA({ nodes, edges }: GraphAProps) {
   const events = {
     select: function (event: any) {
       var { nodes, edges } = event;
-      console.log(edges);
-      console.log(nodes);
     }
   };
 
