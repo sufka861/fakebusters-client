@@ -26,7 +26,6 @@ import { TextField } from '@mui/material';
 // types
 // ==============================|| USER LIST 1 ||============================== //
 
-
 const UserList = ({ resultsLPA }) => {
     const theme = useTheme();
     const dispatch = useDispatch();
@@ -40,11 +39,7 @@ const UserList = ({ resultsLPA }) => {
         setFilter(event.target.value.toLowerCase());
     };
 
-    const filteredData = resultsLPA.filter((item) =>
-        Object.values(item).some(val => 
-            String(val).toLowerCase().includes(filter)
-        )
-    );
+    const filteredData = resultsLPA.filter((item) => Object.values(item).some((val) => String(val).toLowerCase().includes(filter)));
 
     return (
         <React.Fragment>
@@ -59,7 +54,7 @@ const UserList = ({ resultsLPA }) => {
                         <InputAdornment position="start">
                             <SearchIcon />
                         </InputAdornment>
-                    ),
+                    )
                 }}
             />
             <TableContainer>

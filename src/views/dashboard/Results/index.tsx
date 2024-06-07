@@ -19,60 +19,17 @@ const Results = () => {
     const navigate = useNavigate();
 
     const state = location.state || {}; // Fallback to empty object if no state is passed
-    const {
-        resultsLPA,
-        sockpuppetData,
-        responseFerqData,
-        chartData,
-    } = state;
-
-    // const {
-    //     resultsLPA = [
-    //         {
-    //             "Corpus 1": "yosi_shahbar",
-    //             "Corpus 2": "yosi_shahbar",
-    //             "Value": "0.6"
-    //         },
-    //         {
-    //             "Corpus 1": "yosi_shahbar",
-    //             "Corpus 2": "yosi_shahbar",
-    //             "Value": "0.5"
-    //         },
-    //         {
-    //             "Corpus 1": "yosi_shahbar",
-    //             "Corpus 2": "yosi_shahbar",
-    //             "Value": "0.7"
-    //         },
-    //         {
-    //             "Corpus 1": "aaa",
-    //             "Corpus 2": "bbb",
-    //             "Value": "0.8"
-    //         }],
-    //     sockpuppetData = {
-    //         "VeryLowLikelihood": 1,
-    //         "LowLikelihood": 2,
-    //         "MediumLikelihood": 3,
-    //         "HighLikelihood": 4
-    //     },
-    //     responseFerqData = {
-    //         "word": "11111",
-    //         "freq": "22222",
-    //         "account": "33333",
-    //         "initialAuthorsCount": "44444",
-    //         "initialPostsCount": "55555",
-    //         "FrequencyFile":'freq_shenkar_954687bc-6ba5-45c6-a9a4-f3b09b8c9484.csv'
-    //     },
-    //     chartData,
-    // } = state;
-
+    const { resultsLPA, sockpuppetData, responseFerqData, chartData } = state;
 
     const [refreshKey, setRefreshKey] = useState(0);
-    
+
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
             <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
                 <Grid item xs={12}>
-                    <Typography variant="h4" align="center">No Results Available</Typography>
+                    <Typography variant="h4" align="center">
+                        No Results Available
+                    </Typography>
                     <Box textAlign="center" mt={2}>
                         <Button variant="contained" color="secondary" onClick={() => navigate('/dashboard/analytics')}>
                             NEW ANALYSIS
@@ -99,12 +56,17 @@ const Results = () => {
 
             <Grid item xs={12} md={6} lg={6}>
                 <MainCard title="Highest frequency of words 1-10">
-                    <ApexBarChart key={refreshKey} categories={chartData.categories.slice(1, 11)} data={chartData.data.slice(0, 10)} bgColor={"#613cb0"} />
+                    <ApexBarChart
+                        key={refreshKey}
+                        categories={chartData.categories.slice(1, 11)}
+                        data={chartData.data.slice(0, 10)}
+                        bgColor={'#613cb0'}
+                    />
                 </MainCard>
             </Grid>
             <Grid item xs={12} md={6} lg={6}>
                 <MainCard title="Sockpuppet Detection Analysis">
-                    <SockpuppetDetectionChartCard sockpuppetData={sockpuppetData} title=''  />
+                    <SockpuppetDetectionChartCard sockpuppetData={sockpuppetData} title="" />
                 </MainCard>
             </Grid>
         </Grid>
