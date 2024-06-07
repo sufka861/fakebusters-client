@@ -108,18 +108,28 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
 
     const sortedData = React.useMemo(() => {
         if (sortConfig !== null) {
-            return [...filteredData].sort((a, b) => {
-                if (a[sortConfig.key] < b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? -1 : 1;
-                }
-                if (a[sortConfig.key] > b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
+            return [...filteredData]
+                .sort((a, b) => {
+                    if (a[sortConfig.key] < b[sortConfig.key]) {
+                        return sortConfig.direction === 'asc' ? -1 : 1;
+                    }
+                    if (a[sortConfig.key] > b[sortConfig.key]) {
+                        return sortConfig.direction === 'asc' ? 1 : -1;
+                    }
+                    return 0;
+                })
+                .map((item, index) => ({
+                    ...item,
+                    verifiedSelection: verifiedSelections[index] || 'Not Verified',
+                    comment: comments[index] || ''
+                }));
         }
-        return filteredData;
-    }, [filteredData, sortConfig]);
+        return filteredData.map((item, index) => ({
+            ...item,
+            verifiedSelection: verifiedSelections[index] || 'Not Verified',
+            comment: comments[index] || ''
+        }));
+    }, [filteredData, sortConfig, verifiedSelections, comments]);
 
     const requestSort = (key: keyof ResultLPA) => {
         let direction: 'asc' | 'desc' = 'asc';
@@ -149,18 +159,21 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        const aggregatedData = sortedData.map((item, index) => ({
+            ...item,
+            verifiedSelection: verifiedSelections[index] || 'Not Verified',
+            comment: comments[index] || ''
+        }));
+
         try {
-            console.log('Saving data:', sortedData, verifiedSelections, comments, responseFerqData?.FrequencyFile);
+            console.log('Saving data:', aggregatedData, responseFerqData?.FrequencyFile);
 
             const url = `https://fakebusters-server.onrender.com/api/lpa/${responseFerqData?.FrequencyFile}`;
-            console.log('URL:', url);
-
             const response = await axios.put(
                 url,
                 {
-                    LPA_results: sortedData,
-                    verifiedSelections,
-                    comments
+                    LPA_results: aggregatedData
                 },
                 {
                     headers: {
