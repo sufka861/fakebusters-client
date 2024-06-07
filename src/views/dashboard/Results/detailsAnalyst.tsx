@@ -25,7 +25,7 @@ const DetailsAnalyst = () => {
   
   return (
    
-    <MainCard title="Details" >
+    <MainCard title="Experiment Details" >
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
@@ -52,7 +52,7 @@ const DetailsAnalyst = () => {
                 Signature: <Typography component="span" variant="body2">{signature}</Typography>
                 </Typography>
                 <Typography variant="subtitle1">
-                Accounts analysis: <Typography component="span" variant="body2">{responseFerqData.account}</Typography>
+                Accounts analyzed : <Typography component="span" variant="body2">{responseFerqData.account}</Typography>
                 </Typography>
                 <Typography variant="subtitle1">
                 All accounts: <Typography component="span" variant="body2">{responseFerqData.initiaAuthorsCount}</Typography>

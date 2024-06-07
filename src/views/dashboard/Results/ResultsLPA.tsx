@@ -1,16 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import {
-    IconButton, Stack, Table, TableBody, TableCell, TableContainer,
-    TableHead, TableRow, Tooltip, InputAdornment, TextField, Collapse, Box, TableSortLabel, Select, MenuItem, Typography
+    IconButton,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Tooltip,
+    InputAdornment,
+    TextField,
+    Collapse,
+    Box,
+    TableSortLabel,
+    Select,
+    MenuItem,
+    Typography,
+    Button
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import axios from 'axios';
 
 type ResultLPA = {
-    "Corpus 1": string;
-    "Corpus 2": string;
-    "value": string;
+    'Corpus 1': string;
+    'Corpus 2': string;
+    value: string;
 };
 
 type ProfileData = {
@@ -41,6 +58,10 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
     const [comments, setComments] = useState<{ [key: number]: string }>({});
     const [profileData, setProfileData] = useState<{ [key: string]: ProfileData | string }>({});
 
+    const location = useLocation();
+    const state = location.state || {};
+    const { responseFerqData } = state;
+
     const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value.toLowerCase());
     };
@@ -52,14 +73,14 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                 const data = response.data[0];
                 if (data.errors) {
                     console.log(`Errors for ${username}:`, data.errors);
-                    if (data.errors[0].title === "Not Found Error") {
-                        setProfileData(prev => ({ ...prev, [username]: 'User not found' }));
-                    } else if (data.errors[0].title === "Forbidden") {
-                        setProfileData(prev => ({ ...prev, [username]: 'User suspended' }));
+                    if (data.errors[0].title === 'Not Found Error') {
+                        setProfileData((prev) => ({ ...prev, [username]: 'User not found' }));
+                    } else if (data.errors[0].title === 'Forbidden') {
+                        setProfileData((prev) => ({ ...prev, [username]: 'User suspended' }));
                     }
                 } else {
                     const profile = data.data[0];
-                    setProfileData(prev => ({
+                    setProfileData((prev) => ({
                         ...prev,
                         [username]: {
                             username: profile.username,
@@ -83,9 +104,7 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         }
     };
 
-    const filteredData = resultsLPA.filter((item) =>
-        Object.values(item).some(val => String(val).toLowerCase().includes(filter))
-    );
+    const filteredData = resultsLPA.filter((item) => Object.values(item).some((val) => String(val).toLowerCase().includes(filter)));
 
     const sortedData = React.useMemo(() => {
         if (sortConfig !== null) {
@@ -121,11 +140,42 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
     };
 
     const handleVerifiedChange = (index: number, value: string) => {
-        setVerifiedSelections(prev => ({ ...prev, [index]: value }));
+        setVerifiedSelections((prev) => ({ ...prev, [index]: value }));
     };
 
     const handleCommentChange = (index: number, value: string) => {
-        setComments(prev => ({ ...prev, [index]: value }));
+        setComments((prev) => ({ ...prev, [index]: value }));
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            console.log('Saving data:', sortedData, verifiedSelections, comments, responseFerqData?.FrequencyFile);
+
+            const url = `https://fakebusters-server.onrender.com/api/lpa/${responseFerqData?.FrequencyFile}`;
+            console.log('URL:', url);
+
+            const response = await axios.put(
+                url,
+                {
+                    LPA_results: sortedData,
+                    verifiedSelections,
+                    comments
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            console.log('Data saved:', response.data);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Axios error response:', error.response);
+            } else {
+                console.error('Error saving data:', error);
+            }
+        }
     };
 
     const renderProfileData = (username: string) => {
@@ -178,7 +228,9 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                         <TableRow>
                             <TableCell>Profile Image</TableCell>
                             <a href={`https://x.com/${profileData[username]?.username}`} target="_blank" rel="noreferrer">
-                                <TableCell><img src={profileData[username]?.profile_image_url} alt="Profile" width="50" height="50" /></TableCell>
+                                <TableCell>
+                                    <img src={profileData[username]?.profile_image_url} alt="Profile" width="50" height="50" />
+                                </TableCell>
                             </a>
                         </TableRow>
                         <TableRow>
@@ -194,112 +246,99 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
 
     return (
         <>
-            <TextField
-                variant="outlined"
-                placeholder="Filter results..."
-                margin="normal"
-                fullWidth
-                onChange={handleFilterChange}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon />
-                        </InputAdornment>
-                    ),
-                }}
-            />
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell onClick={() => requestSort('Corpus 1')}>
-                                <TableSortLabel active={sortConfig?.key === 'Corpus 1'} direction={sortConfig?.direction}>
-                                    Username 1
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell onClick={() => requestSort('Corpus 2')}>
-                                <TableSortLabel active={sortConfig?.key === 'Corpus 2'} direction={sortConfig?.direction}>
-                                    Username 2
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell onClick={() => requestSort('value')}>
-                                <TableSortLabel active={sortConfig?.key === 'value'} direction={sortConfig?.direction}>
-                                    SockPuppet Distance
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell>Verified</TableCell>
-                            <TableCell>Comments</TableCell>
-                            <TableCell>Expand</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sortedData.map((row, index) => (
-                            <React.Fragment key={index}>
-                                <TableRow
-                                    onClick={() => handleRowClick(index, row["Corpus 1"], row["Corpus 2"])}
-                                    hover
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    <TableCell>{row["Corpus 1"]}</TableCell>
-                                    <TableCell>{row["Corpus 2"]}</TableCell>
-                                    <TableCell>{row.value}</TableCell>
-                                    <TableCell>
-                                        <Select
-                                            value={verifiedSelections[index] || ""}
-                                            onChange={(e) => handleVerifiedChange(index, e.target.value)}
-                                            displayEmpty
-                                            fullWidth
-                                        >
-                                            <MenuItem value="">N/A</MenuItem>
-                                            <MenuItem value="verified">Verified</MenuItem>
-                                            <MenuItem value="unverified">Unverified</MenuItem>
-                                        </Select>
-                                    </TableCell>
-                                    <TableCell>
-                                        <TextField
-                                            value={comments[index] || ""}
-                                            onChange={(e) => handleCommentChange(index, e.target.value)}
-                                            variant="outlined"
-                                            size="small"
-                                            fullWidth
-                                        />
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton>
-                                            {expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell colSpan={6} style={{ paddingBottom: 0, paddingTop: 0 }}>
-                                        <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
-                                            <Box margin={1}>
-                                                <Typography variant="h6" gutterBottom component="div">
-                                                    Profile Details
-                                                </Typography>
-                                                <TableContainer>
-                                                    <Table>
-                                                        <TableBody>
-                                                            <TableRow>
-                                                                <TableCell>{row["Corpus 1"]}</TableCell>
-                                                                <TableCell colSpan={2}>{renderProfileData(row["Corpus 1"])}</TableCell>
-                                                            </TableRow>
-                                                            <TableRow>
-                                                                <TableCell>{row["Corpus 2"]}</TableCell>
-                                                                <TableCell colSpan={2}>{renderProfileData(row["Corpus 2"])}</TableCell>
-                                                            </TableRow>
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </Box>
-                                        </Collapse>
-                                    </TableCell>
-                                </TableRow>
-                            </React.Fragment>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    variant="outlined"
+                    placeholder="Filter results..."
+                    margin="normal"
+                    fullWidth
+                    onChange={handleFilterChange}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon />
+                            </InputAdornment>
+                        )
+                    }}
+                />
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell onClick={() => requestSort('Corpus 1')}>
+                                    <TableSortLabel active={sortConfig?.key === 'Corpus 1'} direction={sortConfig?.direction}>
+                                        Username 1
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell onClick={() => requestSort('Corpus 2')}>
+                                    <TableSortLabel active={sortConfig?.key === 'Corpus 2'} direction={sortConfig?.direction}>
+                                        Username 2
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell onClick={() => requestSort('value')}>
+                                    <TableSortLabel active={sortConfig?.key === 'value'} direction={sortConfig?.direction}>
+                                        Distance
+                                    </TableSortLabel>
+                                </TableCell>
+                                <TableCell>Verified</TableCell>
+                                <TableCell>Comments</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {sortedData.map((row, index) => (
+                                <React.Fragment key={index}>
+                                    <TableRow>
+                                        <TableCell>{row['Corpus 1']}</TableCell>
+                                        <TableCell>{row['Corpus 2']}</TableCell>
+                                        <TableCell>{row.value}</TableCell>
+                                        <TableCell>
+                                            <Select
+                                                value={verifiedSelections[index] || 'Not Verified'}
+                                                onChange={(e) => handleVerifiedChange(index, e.target.value as string)}
+                                            >
+                                                <MenuItem value="Not Verified">Not Verified</MenuItem>
+                                                <MenuItem value="Sockpuppet">Sockpuppet</MenuItem>
+                                                <MenuItem value="Innocent">Innocent</MenuItem>
+                                            </Select>
+                                        </TableCell>
+                                        <TableCell>
+                                            <TextField
+                                                value={comments[index] || ''}
+                                                onChange={(e) => handleCommentChange(index, e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <IconButton onClick={() => handleRowClick(index, row['Corpus 1'], row['Corpus 2'])}>
+                                                {expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                    {expandedRow === index && (
+                                        <TableRow>
+                                            <TableCell colSpan={6}>
+                                                <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
+                                                    <Box margin={1}>
+                                                        <Typography variant="h6">Profile Details for {row['Corpus 1']}</Typography>
+                                                        {renderProfileData(row['Corpus 1'])}
+                                                        <Typography variant="h6">Profile Details for {row['Corpus 2']}</Typography>
+                                                        {renderProfileData(row['Corpus 2'])}
+                                                    </Box>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <Box marginTop={2}>
+                    <Button variant="contained" color="primary" type="submit">
+                        Save Changes
+                    </Button>
+                </Box>
+            </form>
         </>
     );
 };
