@@ -167,8 +167,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         }));
 
         try {
-            console.log('Saving data:', aggregatedData, responseFerqData?.FrequencyFile);
-
             const url = `https://fakebusters-server.onrender.com/api/lpa/${responseFerqData?.FrequencyFile}`;
             const response = await axios.put(
                 url,
@@ -181,7 +179,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                     }
                 }
             );
-            console.log('Data saved:', response.data);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Axios error response:', error.response);
