@@ -20,7 +20,7 @@ const FileUploadStructure: React.FC<FileUploadStructureProps> = ({ onUploadSucce
         if (fileRef.current) {
             formData.append('file', fileRef.current);
             try {
-                const response = await axios.post('http://localhost:5001/api/graphs/', formData, {
+                const response = await axios.post('https://fakebusters-server.onrender.com/api/graphs/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

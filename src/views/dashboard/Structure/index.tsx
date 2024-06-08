@@ -77,7 +77,7 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     useEffect(() => {
         if (graphData) {
             // Fetch nodes data from server
-            fetch('http://localhost:5000/stats', {
+            fetch('https://graphs-analysis.onrender.com/stats', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     useEffect(() => {
         if (graphData) {
             // Fetch nodes data from server
-            fetch('http://localhost:5000/adjacency', {
+            fetch('https://graphs-analysis.onrender.com/adjacency', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

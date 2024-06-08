@@ -81,7 +81,7 @@ export default function Features({ graphData, selected, setSelected, cosineSimil
         const selectedFeaturesFormat = selected.map((feature) => feature.toLowerCase().replace(/\s+/g, '_'));
         setSelectedFeatures(selectedFeaturesFormat);
         try {
-            const response = await fetch('http://127.0.0.1:5000/similarity', {
+            const response = await fetch('https://graphs-analysis.onrender.com/similarity', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
