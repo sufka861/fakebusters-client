@@ -130,6 +130,9 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                 }
             );
             setSuccessMessage('Data saved successfully.');
+            setTimeout(() => {
+                setSuccessMessage('');
+            }, 5000);
             setErrorMessage(''); // Clear any previous error message
         } catch (error) {
             if (axios.isAxiosError(error)) {
