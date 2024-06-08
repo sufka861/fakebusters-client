@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -13,6 +13,7 @@ import ApexBarChart from 'views/dashboard/Analytics/ApexBarChart';
 import MainCard from 'ui-component/cards/MainCard';
 import SockpuppetDetectionChartCard from './SockpuppetDetectionChartCard';
 import { gridSpacing } from 'store/constant';
+import axios from 'axios';
 
 const Results = () => {
     const location = useLocation();
@@ -22,6 +23,38 @@ const Results = () => {
     const { resultsLPA, sockpuppetData, responseFerqData, chartData } = state;
 
     const [refreshKey, setRefreshKey] = useState(0);
+
+    const userId = '6650be951fdcf7cb4e278258'; // TODO: Replace with dynamic user ID
+
+    useEffect(() => {
+        if (responseFerqData && responseFerqData.FrequencyFile) {
+            updateUserProjectId(responseFerqData.FrequencyFile);
+        }
+    }, [responseFerqData]);
+
+    const updateUserProjectId = async (filename: string) => {
+        try {
+            const response = await axios.get(`https://fakebusters-server.onrender.com/api/users/${userId}`);
+            const user = response.data[0];
+
+            if (user && !user.project_id.includes(filename)) {
+                const updatedProjectId = [...user.project_id, filename];
+                await axios.put(
+                    `https://fakebusters-server.onrender.com/api/users/${userId}`,
+                    {
+                        project_id: updatedProjectId
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+            }
+        } catch (error) {
+            console.error('Error updating user project ID:', error);
+        }
+    };
 
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
