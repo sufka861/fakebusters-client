@@ -56,8 +56,8 @@ const Analytics = () => {
     const [projectName, setProjectName] = useState('');
     const [email, setEmail] = useState('');
     const [threshold, setThreshold] = useState(0.5);
-    const [signature, setSignature] = useState(1000);
-    const [accountThreshold, setAccountThreshold] = useState(1000);
+    const [signature, setSignature] = useState(200);
+    const [accountThreshold, setAccountThreshold] = useState(30);
     const [wordThreshold, setWordThreshold] = useState(1000);
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
