@@ -94,8 +94,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
             setExpandedRow(null);
         } else {
             setExpandedRow(index);
-            // fetchProfileData(username1);
-            // fetchProfileData(username2);
         }
     };
 
