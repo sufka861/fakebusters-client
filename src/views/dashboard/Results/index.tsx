@@ -23,12 +23,16 @@ const Results = () => {
     const { resultsLPA, sockpuppetData, responseFerqData, chartData } = state;
 
     const [refreshKey, setRefreshKey] = useState(0);
+    const [userProjects, setUserProjects] = useState([]);
+    const [selectedProjectData, setSelectedProjectData] = useState(null);
 
     const userId = '6650be951fdcf7cb4e278258'; // TODO: Replace with dynamic user ID
 
     useEffect(() => {
         if (responseFerqData && responseFerqData.FrequencyFile) {
             updateUserProjectId(responseFerqData.FrequencyFile);
+        } else {
+            fetchUserProjects();
         }
     }, [responseFerqData]);
 
@@ -56,6 +60,25 @@ const Results = () => {
         }
     };
 
+    const fetchUserProjects = async () => {
+        try {
+            const response = await axios.get(`https://fakebusters-server.onrender.com/api/users/${userId}`);
+            const user = response.data[0];
+            setUserProjects(user.project_id);
+        } catch (error) {
+            console.error('Error fetching user projects:', error);
+        }
+    };
+
+    const fetchProjectData = async (filename: string) => {
+        try {
+            const response = await axios.get(`https://fakebusters-server.onrender.com/api/lpa/${filename}`);
+            setSelectedProjectData(response.data[0]);
+        } catch (error) {
+            console.error('Error fetching project data:', error);
+        }
+    };
+
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
             <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
@@ -68,7 +91,40 @@ const Results = () => {
                             NEW ANALYSIS
                         </Button>
                     </Box>
+                    <Box textAlign="center" mt={4}>
+                        <Typography variant="h5" align="center">
+                            Previous Results
+                        </Typography>
+                        {userProjects.length > 0 ? (
+                            <Box mt={2}>
+                                {userProjects.map((project) => (
+                                    <Button
+                                        key={project}
+                                        variant="outlined"
+                                        color="primary"
+                                        onClick={() => fetchProjectData(project)}
+                                        style={{ margin: '5px' }}
+                                    >
+                                        {project}
+                                    </Button>
+                                ))}
+                            </Box>
+                        ) : (
+                            <Typography variant="body1" align="center">
+                                No previous results available.
+                            </Typography>
+                        )}
+                    </Box>
                 </Grid>
+                {selectedProjectData && (
+                    <Grid item xs={12}>
+                        <MainCard title="Selected Project Data">
+                            <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
+                                <ResultsLPA resultsLPA={selectedProjectData.LPA_results} />
+                            </Box>
+                        </MainCard>
+                    </Grid>
+                )}
             </Grid>
         );
     }
