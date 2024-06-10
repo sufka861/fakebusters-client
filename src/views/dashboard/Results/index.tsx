@@ -120,7 +120,7 @@ const Results = () => {
                     <Grid item xs={12}>
                         <MainCard title="Selected Project Data">
                             <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                                <ResultsLPA resultsLPA={selectedProjectData.LPA_results} />
+                            <ResultsLPA resultsLPA={selectedProjectData.LPA_results } fileName={selectedProjectData?.file_id} />
                             </Box>
                         </MainCard>
                     </Grid>
@@ -138,7 +138,7 @@ const Results = () => {
             <Grid item xs={12}>
                 <MainCard title="SockPuppet Distance">
                     <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                        <ResultsLPA resultsLPA={resultsLPA} />
+                        <ResultsLPA resultsLPA={resultsLPA} fileName={responseFerqData.FrequencyFile} />
                     </Box>
                 </MainCard>
             </Grid>
