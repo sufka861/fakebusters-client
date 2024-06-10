@@ -24,19 +24,22 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import axios from 'axios';
-import { ProfileDataTable} from './ProfileDataTable';
+import { ProfileDataTable } from './ProfileDataTable';
 
 type ResultLPA = {
     'Corpus 1': string;
     'Corpus 2': string;
     value: string;
+    verifiedSelection?: string;
+    comment?: string;
 };
 
 type ResultsLPAProps = {
     resultsLPA: ResultLPA[];
+    fileName: string;
 };
 
-const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
+const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA, fileName}) => {
     const theme = useTheme();
     const [filter, setFilter] = useState<string>('');
     const [sortConfig, setSortConfig] = useState<{ key: keyof ResultLPA; direction: 'asc' | 'desc' } | null>(null);
@@ -45,10 +48,41 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
     const [comments, setComments] = useState<{ [key: number]: string }>({});
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [loadedFromDB, setLoadedFromDB] = useState<boolean>(false);
 
-    const location = useLocation();
-    const state = location.state || {};
-    const { responseFerqData } = state;
+    // const location = useLocation();
+    // const state = location.state || {};
+    // const { responseFerqData } = state;
+
+    const loadFromDB = async () => {
+        try {
+            const url = `https://fakebusters-server.onrender.com/api/lpa/${fileName}`;
+            const response = await axios.get(url);
+
+            if (response.data.length !== 0) {
+                const dataFromDB = response.data[0].LPA_results;
+                const newVerifiedSelections: { [key: number]: string } = {};
+                const newComments: { [key: number]: string } = {};
+
+                dataFromDB.forEach((item: ResultLPA, index: number) => {
+                    newVerifiedSelections[index] = item.verifiedSelection || 'Not Verified';
+                    newComments[index] = item.comment || '';
+                });
+
+                setVerifiedSelections(newVerifiedSelections);
+                setComments(newComments);
+                setLoadedFromDB(true);
+            }
+        } catch (error) {
+            console.error('Error loading data from DB:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (!loadedFromDB) {
+            loadFromDB();
+        }
+    }, [loadedFromDB]);
 
     const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFilter(event.target.value.toLowerCase());
@@ -115,8 +149,8 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         }));
 
         try {
-            const url = `https://fakebusters-server.onrender.com/api/lpa/${responseFerqData?.FrequencyFile}`;
-            const response = await axios.put(
+            const url = `https://fakebusters-server.onrender.com/api/lpa/${fileName}`;
+            await axios.put(
                 url,
                 {
                     LPA_results: aggregatedData
@@ -143,6 +177,18 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
             setSuccessMessage(''); // Clear any previous success message
         }
     };
+
+    const submitData = async () => {
+        const mockEvent = {
+            preventDefault: () => {},
+            currentTarget: document.createElement('form')
+        } as React.FormEvent<HTMLFormElement>;
+        await handleSubmit(mockEvent);
+    };
+
+    useEffect(() => {
+        submitData();
+    }, []);
 
     return (
         <div>
@@ -176,8 +222,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
-                                <TableCell>Verified</TableCell>
-                                <TableCell>Comment</TableCell>
                                 <TableCell>Expand</TableCell>
                             </TableRow>
                         </TableHead>
@@ -208,26 +252,28 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                             <IconButton>{expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
                                         </TableCell>
                                     </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{ padding: 0 }} colSpan={7}>
-                                            <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
-                                                <Box margin={1} display="flex">
-                                                    <Box flex={1}>
-                                                        <Typography variant="h6" gutterBottom component="div">
-                                                            Profile Data for {item['Corpus 1']}
-                                                        </Typography>
-                                                        {ProfileDataTable({ username: item['Corpus 1'] })}
+                                    {expandedRow === index && (
+                                        <TableRow>
+                                            <TableCell style={{ padding: 0 }} colSpan={6}>
+                                                <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
+                                                    <Box margin={1} display="flex">
+                                                        <Box flex={1}>
+                                                            <Typography variant="h6" gutterBottom component="div">
+                                                                Profile Data for {item['Corpus 1']}
+                                                            </Typography>
+                                                            <ProfileDataTable username={item['Corpus 1']} />
+                                                        </Box>
+                                                        <Box flex={1}>
+                                                            <Typography variant="h6" gutterBottom component="div">
+                                                                Profile Data for {item['Corpus 2']}
+                                                            </Typography>
+                                                            <ProfileDataTable username={item['Corpus 2']} />
+                                                        </Box>
                                                     </Box>
-                                                    <Box flex={1}>
-                                                        <Typography variant="h6" gutterBottom component="div">
-                                                            Profile Data for {item['Corpus 2']}
-                                                        </Typography>
-                                                        {ProfileDataTable({ username: item['Corpus 2'] })}
-                                                    </Box>
-                                                </Box>
-                                            </Collapse>
-                                        </TableCell>
-                                    </TableRow>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
                                 </React.Fragment>
                             ))}
                         </TableBody>
