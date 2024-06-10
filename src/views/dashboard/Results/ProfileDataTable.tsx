@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type ProfileData = {
     username: string;
@@ -18,25 +18,23 @@ type ProfileData = {
 };
 
 const ProfileDataTable: React.FC<{ username: string }> = ({ username }) => {
-    const [profileData, setProfileData] = useState<{ [key: string]: ProfileData | string }>({});
-    
-    const fetchProfileData = async (username: string) => {
-        if (!profileData[username]) {
-            try {
-                const response = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
-                const data = response.data[0];
-                if (data.errors) {
-                    console.log(`Errors for ${username}:`, data.errors);
-                    if (data.errors[0].title === 'Not Found Error') {
-                        setProfileData((prev) => ({ ...prev, [username]: 'User not found' }));
-                    } else if (data.errors[0].title === 'Forbidden') {
-                        setProfileData((prev) => ({ ...prev, [username]: 'User suspended' }));
-                    }
-                } else {
-                    const profile = data.data[0];
-                    setProfileData((prev) => ({
-                        ...prev,
-                        [username]: {
+    const [profileData, setProfileData] = useState<ProfileData | string | null>(null);
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            if (!profileData) {
+                try {
+                    const response = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
+                    const data = response.data[0];
+                    if (data.errors) {
+                        if (data.errors[0].title === 'Not Found Error') {
+                            setProfileData('User not found');
+                        } else if (data.errors[0].title === 'Forbidden') {
+                            setProfileData('User suspended');
+                        }
+                    } else {
+                        const profile = data.data[0];
+                        setProfileData({
                             username: profile.username,
                             description: profile.description,
                             followers_count: profile.public_metrics.followers_count,
@@ -49,74 +47,75 @@ const ProfileDataTable: React.FC<{ username: string }> = ({ username }) => {
                             profile_image_url: profile.profile_image_url,
                             created_at: profile.created_at,
                             name: profile.name
-                        }
-                    }));
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error fetching profile data:', error);
+                    setProfileData('Error fetching profile data');
                 }
-            } catch (error) {
-                console.error('Error fetching profile data:', error);
             }
-        }
-    };
+        };
 
-    fetchProfileData(username);
+        fetchProfileData();
+    }, [username]);
 
-    if (typeof profileData[username] === 'string') {
-        return <Typography>{JSON.stringify(profileData[username])}</Typography>;
-    } else if (profileData[username]) {
+    if (profileData === 'User not found' || profileData === 'User suspended' || profileData === 'Error fetching profile data') {
+        return <Typography>{profileData}</Typography>;
+    } else if (profileData) {
         return (
             <Table size="small">
                 <TableBody>
                     <TableRow>
                         <TableCell>Name</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.name}</TableCell>
+                        <TableCell>{profileData.name}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Username</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.username}</TableCell>
+                        <TableCell>{profileData.username}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Description</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.description}</TableCell>
+                        <TableCell>{profileData.description}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Followers</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.followers_count}</TableCell>
+                        <TableCell>{profileData.followers_count}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Following</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.following_count}</TableCell>
+                        <TableCell>{profileData.following_count}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Tweets</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.tweet_count}</TableCell>
+                        <TableCell>{profileData.tweet_count}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Likes</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.like_count}</TableCell>
+                        <TableCell>{profileData.like_count}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Listed</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.listed_count}</TableCell>
+                        <TableCell>{profileData.listed_count}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Verified</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.verified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell>{profileData.verified ? 'Yes' : 'No'}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Verified Type</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.verified_type}</TableCell>
+                        <TableCell>{profileData.verified_type}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell>Profile Image</TableCell>
-                        <a href={`https://x.com/${profileData[username]?.username}`} target="_blank" rel="noreferrer">
+                        <a href={`https://x.com/${profileData.username}`} target="_blank" rel="noreferrer">
                             <TableCell>
-                                <img src={(profileData[username] as ProfileData)?.profile_image_url} alt="Profile" />
+                                <img src={profileData.profile_image_url} alt="Profile" />
                             </TableCell>
                         </a>
                     </TableRow>
                     <TableRow>
                         <TableCell>Created At</TableCell>
-                        <TableCell>{(profileData[username] as ProfileData)?.created_at}</TableCell>
+                        <TableCell>{profileData.created_at}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

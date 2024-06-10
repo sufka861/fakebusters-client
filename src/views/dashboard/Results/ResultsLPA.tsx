@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import axios from 'axios';
-import { ProfileDataTable} from './ProfileDataTable';
+import { ProfileDataTable } from './ProfileDataTable';
 
 type ResultLPA = {
     'Corpus 1': string;
@@ -144,6 +144,18 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
         }
     };
 
+    const submitData = async () => {
+        const mockEvent = {
+            preventDefault: () => {},
+            currentTarget: document.createElement('form')
+        } as React.FormEvent<HTMLFormElement>;
+        await handleSubmit(mockEvent);
+    };
+
+    useEffect(() => {
+        submitData();
+    }, []);
+
     return (
         <div>
             <TextField
@@ -176,8 +188,6 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                         </TableSortLabel>
                                     </TableCell>
                                 ))}
-                                <TableCell>Verified</TableCell>
-                                <TableCell>Comment</TableCell>
                                 <TableCell>Expand</TableCell>
                             </TableRow>
                         </TableHead>
@@ -216,13 +226,13 @@ const ResultsLPA: React.FC<ResultsLPAProps> = ({ resultsLPA }) => {
                                                         <Typography variant="h6" gutterBottom component="div">
                                                             Profile Data for {item['Corpus 1']}
                                                         </Typography>
-                                                        {ProfileDataTable({ username: item['Corpus 1'] })}
+                                                        <ProfileDataTable username={item['Corpus 1']} />
                                                     </Box>
                                                     <Box flex={1}>
                                                         <Typography variant="h6" gutterBottom component="div">
                                                             Profile Data for {item['Corpus 2']}
                                                         </Typography>
-                                                        {ProfileDataTable({ username: item['Corpus 2'] })}
+                                                        <ProfileDataTable username={item['Corpus 2']} />
                                                     </Box>
                                                 </Box>
                                             </Collapse>
