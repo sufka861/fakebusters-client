@@ -25,6 +25,7 @@ const Results = () => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [userProjects, setUserProjects] = useState([]);
     const [selectedProjectData, setSelectedProjectData] = useState(null);
+    const [projectDetails, setProjectDetails] = useState([]);
 
     const userId = '6650be951fdcf7cb4e278258'; // TODO: Replace with dynamic user ID
 
@@ -35,6 +36,12 @@ const Results = () => {
             fetchUserProjects();
         }
     }, [responseFerqData]);
+
+    useEffect(() => {
+        if (userProjects.length > 0) {
+            fetchProjectDetails();
+        }
+    }, [userProjects]);
 
     const updateUserProjectId = async (filename: string) => {
         try {
@@ -70,6 +77,25 @@ const Results = () => {
         }
     };
 
+    const fetchProjectDetails = async () => {
+        try {
+            const details = await Promise.all(
+                userProjects.map(async (project) => {
+                    const response = await axios.get(`https://fakebusters-server.onrender.com/api/lpa/${project}`);
+                    const data = response.data[0];
+                    return {
+                        project_name: data.project_name,
+                        date_created: data.date_created,
+                        file_id: data.file_id
+                    };
+                })
+            );
+            setProjectDetails(details);
+        } catch (error) {
+            console.error('Error fetching project details:', error);
+        }
+    };
+
     const fetchProjectData = async (filename: string) => {
         try {
             const response = await axios.get(`https://fakebusters-server.onrender.com/api/lpa/${filename}`);
@@ -95,17 +121,17 @@ const Results = () => {
                         <Typography variant="h5" align="center">
                             Previous Results
                         </Typography>
-                        {userProjects.length > 0 ? (
+                        {projectDetails.length > 0 ? (
                             <Box mt={2}>
-                                {userProjects.map((project) => (
+                                {projectDetails.map((project) => (
                                     <Button
-                                        key={project}
+                                        key={project.file_id}
                                         variant="outlined"
                                         color="primary"
-                                        onClick={() => fetchProjectData(project)}
+                                        onClick={() => fetchProjectData(project.file_id)}
                                         style={{ margin: '5px' }}
                                     >
-                                        {project}
+                                        {project.project_name} - {new Date(project.date_created).toLocaleString()} - {project.file_id}
                                     </Button>
                                 ))}
                             </Box>
@@ -118,9 +144,9 @@ const Results = () => {
                 </Grid>
                 {selectedProjectData && (
                     <Grid item xs={12}>
-                        <MainCard title="Selected Project Data">
+                        <MainCard title={selectedProjectData.project_name}>
                             <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                            <ResultsLPA resultsLPA={selectedProjectData.LPA_results } fileName={selectedProjectData?.file_id} />
+                                <ResultsLPA resultsLPA={selectedProjectData.LPA_results} fileName={selectedProjectData.file_id} />
                             </Box>
                         </MainCard>
                     </Grid>
