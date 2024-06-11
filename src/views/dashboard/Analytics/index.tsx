@@ -56,7 +56,8 @@ const Analytics = () => {
     const [projectName, setProjectName] = useState('');
     const [email, setEmail] = useState('');
     const [threshold, setThreshold] = useState(0.5);
-    const [signature, setSignature] = useState(1000);
+
+    const [signature, setSignature] = useState(200);
     const [accountThreshold, setAccountThreshold] = useState(30);
     const [wordThreshold, setWordThreshold] = useState(1000);
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
@@ -123,7 +124,7 @@ const Analytics = () => {
         console.log("useEffect 2")
         console.log(responseFerqData.FrequencyFile)
 
-        const url = `http://localhost:5000/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
+        const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
         const eventSource = new EventSource(url);
 
         eventSource.onmessage = (event) => {
@@ -186,7 +187,7 @@ const Analytics = () => {
                 formData.append('files', file);
             });
             try {
-                const response = await axios.post('http://localhost:5000/api/s3/newProject', formData, {
+                const response = await axios.post('https://fakebusters-server.onrender.com/api/s3/newProject', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -266,7 +267,7 @@ const Analytics = () => {
         console.log('Sending data:', data);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/s3/preprocessing', data, {
+            const response = await axios.post('https://fakebusters-server.onrender.com/api/s3/preprocessing', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

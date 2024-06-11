@@ -29,7 +29,7 @@ function ProjectForm({
     return (
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
-                <MainCard title="New Analysis">
+                <MainCard title="LPA Analysis">
                     <Grid container spacing={2} alignItems="center">
                         <Grid item xs={6}>
                             <InputLabel>Project Name</InputLabel>

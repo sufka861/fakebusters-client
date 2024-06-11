@@ -251,7 +251,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
         }
         console.log(data)
         try {
-            const response = await axios.post('http://localhost:5000/api/vocabularies/', data, {
+            const response = await axios.post('https://fakebusters-server.onrender.com/api/vocabularies/', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -264,7 +264,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
 
     const handleGetAllStopWords = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/vocabularies/', {
+            const response = await axios.get('https://fakebusters-server.onrender.com/api/vocabularies/', {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -288,7 +288,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const handleSelect = async () => {
         if (selectedVocabId) {
             try {
-                const response = await axios.post('http://localhost:5000/api/selected_vocabulary/', { id: selectedVocabId }, {
+                const response = await axios.post('https://fakebusters-server.onrender.com/api/selected_vocabulary/', { id: selectedVocabId }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

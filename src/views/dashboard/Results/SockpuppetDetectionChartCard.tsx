@@ -7,14 +7,13 @@ import Box from '@mui/material/Box';
 
 interface SockpuppetDetectionChartProps {
     sockpuppetData: {
-        VeryLowLikelihood: number,
-        LowLikelihood: number,
-        MediumLikelihood: number,
-        HighLikelihood: number
+        VeryLowLikelihood: number;
+        LowLikelihood: number;
+        MediumLikelihood: number;
+        HighLikelihood: number;
     };
     title: string;
 }
-
 
 const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetectionChartProps) => {
     if (!sockpuppetData) {
@@ -61,17 +60,11 @@ const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetec
         <MainCard>
             <Grid container direction="column" spacing={1}>
                 <Grid item>
-               
                     <Typography variant="subtitle1">{title}</Typography>
                 </Grid>
                 <Grid item>
-                    <Chart 
-                        type={chartData.type}
-                        series={chartData.series}
-                        options={chartData.options}
-                        height={chartData.height}
-                    />
-                     <Box height={40} />
+                    <Chart type={chartData.type} series={chartData.series} options={chartData.options} height={chartData.height} />
+                    <Box height={40} />
                 </Grid>
             </Grid>
         </MainCard>

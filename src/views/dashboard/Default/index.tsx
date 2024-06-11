@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 // material-ui
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
@@ -15,38 +16,116 @@ import AccountCircleTwoTone from '@mui/icons-material/AccountCircleTwoTone';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentTwoTone';
 
 import UserCountCard from 'ui-component/cards/UserCountCard';
-import ToDoList from './ToDoList';
-import TrafficSources from './TrafficSources';
-import TeamMembers from './TeamMembers';
-
-import UserActivity from './UserActivity';
-import LatestMessages from './LatestMessages';
-
+import PairsResultsTable from './PairsResultsTable';
 import ProjectTable from './ProjectTable';
-import ProductSales from './ProductSales';
-
-import TasksCard from '../Vocabularies/TasksCard';
-import ApplicationSales from './ApplicationSales';
-
-import ActiveTickets from './ActiveTickets';
-import LatestPosts from './LatestPosts';
-
-import FeedsCard from './FeedsCard';
-import LatestCustomers from './LatestCustomers';
-import LatestOrder from './LatestOrder';
-
-import IncomingRequests from './IncomingRequests';
-import TotalRevenue from './TotalRevenue';
-import NewCustomers from './NewCustomers';
-import RecentTickets from './RecentTickets';
 
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 
-// ===========================|| WIDGET DATA ||=========================== //
-
 const WidgetData = () => {
-    const [filter, setFilter] = useState(5); // default to show 5 rows
+    const [filter, setFilter] = useState(5); 
+    const [singlesData, setSinglesData] = useState([]);
+    const [userDetails, setUserDetails] = useState([]);
+    const [pairsData, setPairsData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('https://fakebusters-server.onrender.com/api/suspects/6650be951fdcf7cb4e278258');
+                const data = await response.json();
+                console.log(data); 
+                setSinglesData(data.singles); 
+
+                const userDetailsPromises = data.singles.map(async (single) => {
+                    const username = single.corpus;
+                    try {
+                        const userResponse = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
+                        const profileData = userResponse.data?.[0];
+                        
+                        let status = 'Active';
+                        if (profileData?.errors) {
+                            if (profileData.errors[0].title === 'Not Found Error') {
+                                status = 'User not found';
+                            } else if (profileData.errors[0].title === 'Forbidden') {
+                                status = 'User suspended';
+                            }
+                        } else if (!profileData || !profileData.data || !profileData.data[0]) {
+                            status = 'No profile data';
+                        }
+
+                        return {
+                            name: profileData?.data?.[0]?.username || username,
+                            username,
+                            image: profileData?.data?.[0]?.profile_image_url || '',
+                            averageValue: parseFloat(single.averageValue), // Ensure value is parsed as number
+                            status,
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching profile data for ${username}:`, error);
+                        return {
+                            name: username,
+                            username,
+                            image: '',
+                            averageValue: parseFloat(single.averageValue), // Ensure value is parsed as number
+                            status: 'Error fetching profile data',
+                        };
+                    }
+                });
+
+                const userDetailsResults = await Promise.all(userDetailsPromises);
+                setUserDetails(userDetailsResults);
+
+                const pairsDetailsPromises = data.pairs.map(async (pair) => {
+                    const [user1, user2] = await Promise.all([
+                        axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair['Corpus 1']}`),
+                        axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair['Corpus 2']}`)
+                    ]);
+
+                    const user1Data = user1.data?.[0];
+                    const user2Data = user2.data?.[0];
+
+                    let user1Status = 'Active';
+                    if (user1Data?.errors) {
+                        if (user1Data.errors[0].title === 'Not Found Error') {
+                            user1Status = 'User not found';
+                        } else if (user1Data.errors[0].title === 'Forbidden') {
+                            user1Status = 'User suspended';
+                        }
+                    } else if (!user1Data || !user1Data.data || !user1Data.data[0]) {
+                        user1Status = 'No profile data';
+                    }
+
+                    let user2Status = 'Active';
+                    if (user2Data?.errors) {
+                        if (user2Data.errors[0].title === 'Not Found Error') {
+                            user2Status = 'User not found';
+                        } else if (user2Data.errors[0].title === 'Forbidden') {
+                            user2Status = 'User suspended';
+                        }
+                    } else if (!user2Data || !user2Data.data || !user2Data.data[0]) {
+                        user2Status = 'No profile data';
+                    }
+
+                    return {
+                        user1Name: user1Data?.data?.[0]?.username || pair['Corpus 1'],
+                        user1Image: user1Data?.data?.[0]?.profile_image_url || '',
+                        user1Status,
+                        user2Name: user2Data?.data?.[0]?.username || pair['Corpus 2'],
+                        user2Image: user2Data?.data?.[0]?.profile_image_url || '',
+                        user2Status,
+                        value: parseFloat(pair.value), // Ensure value is parsed as number
+                    };
+                });
+
+                const pairsDetailsResults = await Promise.all(pairsDetailsPromises);
+                setPairsData(pairsDetailsResults);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleSliderChange = (event, newValue) => {
         setFilter(newValue);
@@ -111,13 +190,11 @@ const WidgetData = () => {
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard title="LPA Analysis - Main Suspects" content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
-                        <ProjectTable filter={filter} />
+                        <ProjectTable data={userDetails.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-                        <Button variant="outlined" color="primary">
-                            View All
-                        </Button>
+
                     </CardActions>
                 </MainCard>
             </Grid>
@@ -125,12 +202,35 @@ const WidgetData = () => {
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard title="Structural Analysis - Main Suspects" content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
-                        <ProjectTable filter={filter} />
+                        <ProjectTable data={[]} /> {/* Pass empty array or another dataset here */}
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-                        <Button variant="outlined" color="primary">
-                            View All
+                    </CardActions>
+                </MainCard>
+            </Grid>
+            <Grid item xs={12} lg={6} md={6}>
+                <MainCard title="LPA - Latest Results" content={false}>
+                    <CardContent sx={{ p: 0 }}>
+                        <PairsResultsTable data={pairsData.slice(0, filter)} /> {/* Apply filter */}
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Button variant="text" size="small">
+                            View all Results
+                        </Button>
+                    </CardActions>
+                </MainCard>
+            </Grid>
+            <Grid item xs={12} lg={6} md={6}>
+                <MainCard title="Structural Analysis - Latest Results" content={false}>
+                    <CardContent sx={{ p: 0 }}>
+                        <PairsResultsTable data={pairsData.slice(0, filter)} /> {/* Apply filter */}
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        <Button variant="text" size="small">
+                            View all Results
                         </Button>
                     </CardActions>
                 </MainCard>

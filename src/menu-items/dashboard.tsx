@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff } from '@tabler/icons-react';
+import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff,IconGraph } from '@tabler/icons-react';
 
 // type
 import { NavItemType } from 'types';
@@ -11,7 +11,8 @@ const icons = {
     IconDashboard: IconDashboard,
     IconDeviceAnalytics: IconDeviceAnalytics,
     IconClipboardList:IconClipboardList,
-    IconBookFilled:IconBookOff
+    IconBookFilled:IconBookOff,
+    IconGraph:IconGraph
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -32,7 +33,7 @@ const dashboard: NavItemType = {
         },
         {
             id: 'newAnalysis',
-            title: <FormattedMessage id="New Analysis" />,
+            title: <FormattedMessage id="LPA Analysis" />,
             type: 'item',
             url: '/dashboard/analytics',
             icon: icons.IconDeviceAnalytics,
@@ -40,7 +41,7 @@ const dashboard: NavItemType = {
         },
         {
             id: 'results',
-            title: <FormattedMessage id="Results" />,
+            title: <FormattedMessage id="LPA Results" />,
             type: 'item',
             url: '/dashboard/results',
             icon: icons.IconClipboardList,
@@ -53,7 +54,7 @@ const dashboard: NavItemType = {
             url: '/dashboard/vocabularies',
             icon: icons.IconBookFilled,
             breadcrumbs: true
-        },
+        }
     ]
 };
 
