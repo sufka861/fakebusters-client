@@ -15,6 +15,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import SockpuppetDetectionChartCard from './SockpuppetDetectionChartCard';
 import { gridSpacing } from 'store/constant';
 import axios from 'axios';
+import PrevResults from './PrevResults'; // Import the new component
 
 const Results = () => {
     const location = useLocation();
@@ -136,113 +137,16 @@ const Results = () => {
 
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
-            <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-                <Grid item xs={12}>
-                    <Typography variant="h4" align="center">
-                        No Results Available
-                    </Typography>
-                    <Box textAlign="center" mt={2}>
-                        <Button variant="contained" color="secondary" onClick={() => navigate('/dashboard/analytics')}>
-                            NEW ANALYSIS
-                        </Button>
-                    </Box>
-                    <Box textAlign="center" mt={4}>
-                        <Typography variant="h5" align="center">
-                            Previous Results
-                        </Typography>
-                        <TextField
-                            label="Search"
-                            value={filter}
-                            onChange={handleFilterChange}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                            fullWidth
-                            margin="normal"
-                        />
-                        {sortedProjects.length > 0 ? (
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>
-                                                <TableSortLabel
-                                                    active={sortConfig.key === 'project_name'}
-                                                    direction={sortConfig.direction}
-                                                    onClick={() => handleSort('project_name')}
-                                                >
-                                                    Project Name
-                                                </TableSortLabel>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TableSortLabel
-                                                    active={sortConfig.key === 'date_created'}
-                                                    direction={sortConfig.direction}
-                                                    onClick={() => handleSort('date_created')}
-                                                >
-                                                    Date Created
-                                                </TableSortLabel>
-                                            </TableCell>
-                                            <TableCell>
-                                                <TableSortLabel
-                                                    active={sortConfig.key === 'file_id'}
-                                                    direction={sortConfig.direction}
-                                                    onClick={() => handleSort('file_id')}
-                                                >
-                                                    File ID
-                                                </TableSortLabel>
-                                            </TableCell>
-                                            <TableCell>Action</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {sortedProjects.map((project) => (
-                                            <TableRow
-                                                key={project.file_id}
-                                                sx={{
-                                                    '&:hover': {
-                                                        backgroundColor: '#f5f5f5'
-                                                    }
-                                                }}
-                                            >
-                                                <TableCell>{project.project_name}</TableCell>
-                                                <TableCell>{new Date(project.date_created).toLocaleString()}</TableCell>
-                                                <TableCell>{project.file_id}</TableCell>
-                                                <TableCell>
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={() => fetchProjectData(project.file_id)}
-                                                    >
-                                                        Load
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        ) : (
-                            <Typography variant="body1" align="center">
-                                No previous results available.
-                            </Typography>
-                        )}
-                    </Box>
-                </Grid>
-                {selectedProjectData && (
-                    <Grid item xs={12}>
-                        <MainCard title={selectedProjectData.project_name}>
-                            <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-                                <ResultsLPA resultsLPA={selectedProjectData.LPA_results} fileName={selectedProjectData.file_id} />
-                            </Box>
-                        </MainCard>
-                    </Grid>
-                )}
-            </Grid>
+            <PrevResults
+                navigate={navigate}
+                filter={filter}
+                handleFilterChange={handleFilterChange}
+                sortedProjects={sortedProjects}
+                sortConfig={sortConfig}
+                handleSort={handleSort}
+                fetchProjectData={fetchProjectData}
+                selectedProjectData={selectedProjectData}
+            />
         );
     }
 
