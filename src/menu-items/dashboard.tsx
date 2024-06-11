@@ -36,7 +36,7 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/analytics',
             icon: icons.IconDeviceAnalytics,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'results',
@@ -44,7 +44,7 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/results',
             icon: icons.IconClipboardList,
-            breadcrumbs: false
+            breadcrumbs: true
         },
         {
             id: 'vocabularies',
@@ -52,8 +52,8 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/vocabularies',
             icon: icons.IconBookFilled,
-            breadcrumbs: false
-        }
+            breadcrumbs: true
+        },
     ]
 };
 

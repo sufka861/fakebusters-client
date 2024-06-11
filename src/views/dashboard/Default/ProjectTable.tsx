@@ -1,3 +1,4 @@
+import React from 'react';
 // material-ui
 import Avatar from '@mui/material/Avatar';
 import Grid from '@mui/material/Grid';
@@ -25,34 +26,30 @@ const createData = (
     designation: string,
     product: string,
     date: string,
-    badgeText: string,
-    badgeType: string
-) => ({ avtar, name, designation, product, date, badgeText, badgeType });
+    score: number
+) => ({ avtar, name, designation, product, date, score });
 
 const rows = [
-    createData(Avatar1, 'John Deo', 'Graphics Designer', 'Materially', 'Jun, 26', 'Low', 'warning'),
-    createData(Avatar2, 'Jenifer Vintage', 'Web Designer', 'Mashable', 'March, 31', 'High', 'error'),
-    createData(Avatar3, 'William Jem', 'Developer', 'Flatable', 'Aug, 02', 'Medium', 'primary'),
-    createData(Avatar4, 'David Jones', 'Developer', 'Guruable', 'Sep, 22', 'High', 'error')
+    createData(Avatar1, 'John Deo', 'Graphics Designer', 'Materially', 'Jun, 26', 3),
+    createData(Avatar2, 'Jenifer Vintage', 'Web Designer', 'Mashable', 'March, 31', 5),
+    createData(Avatar3, 'William Jem', 'Developer', 'Flatable', 'Aug, 02', 4),
+    createData(Avatar4, 'David Jones', 'Developer', 'Guruable', 'Sep, 22', 5)
 ];
 
 // ===========================|| DATA WIDGET - PROJECT TABLE CARD ||=========================== //
 
-const ProjectTable = () => (
+const ProjectTable = ({ filter }) => (
     <TableContainer>
         <Table>
             <TableHead>
                 <TableRow>
-                    <TableCell sx={{ pl: 3 }}>Assigned</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Due Date</TableCell>
-                    <TableCell align="right" sx={{ pr: 3 }}>
-                        Priority
-                    </TableCell>
+                    <TableCell sx={{ pl: 3 }}>Name</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell align="right" sx={{ pr: 3 }}>Score</TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
-                {rows.map((row, index) => (
+                {rows.slice(0, filter).map((row, index) => (
                     <TableRow hover key={index}>
                         <TableCell sx={{ pl: 3 }}>
                             <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
@@ -65,10 +62,9 @@ const ProjectTable = () => (
                                 </Grid>
                             </Grid>
                         </TableCell>
-                        <TableCell>{row.product}</TableCell>
                         <TableCell>{row.date}</TableCell>
                         <TableCell align="right" sx={{ pr: 3 }}>
-                            <Chip chipcolor={row.badgeType} label={row.badgeText} size="small" />
+                            {row.score}
                         </TableCell>
                     </TableRow>
                 ))}

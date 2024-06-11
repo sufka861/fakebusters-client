@@ -9,15 +9,16 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import { loader as productsLoader, productLoader } from 'api/products';
 
 // dashboard routing
-const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Analytics')));
+const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const DashboardResults = Loadable(lazy(() => import('views/dashboard/Results')));
 const DashboardVocabularies = Loadable(lazy(() => import('views/dashboard/Vocabularies')));
 
 
+
 // widget routing
 const WidgetStatistics = Loadable(lazy(() => import('views/widget/Statistics')));
-const WidgetData = Loadable(lazy(() => import('views/widget/Data')));
+const WidgetData = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const WidgetChart = Loadable(lazy(() => import('views/widget/Chart')));
 
 // application - user social & account profile routing

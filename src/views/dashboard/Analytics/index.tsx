@@ -57,7 +57,7 @@ const Analytics = () => {
     const [email, setEmail] = useState('');
     const [threshold, setThreshold] = useState(0.5);
     const [signature, setSignature] = useState(1000);
-    const [accountThreshold, setAccountThreshold] = useState(1000);
+    const [accountThreshold, setAccountThreshold] = useState(30);
     const [wordThreshold, setWordThreshold] = useState(1000);
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
@@ -104,6 +104,7 @@ const Analytics = () => {
     };
 
     const handleFormChange = (field, value) => {
+        console.log(`Field: ${field}, Value: ${value}`);
         if (field === 'projectName') setProjectName(value);
         if (field === 'email') setEmail(value);
         if (field === 'threshold') setThreshold(value);
@@ -114,7 +115,7 @@ const Analytics = () => {
 
     useEffect(() => {
         console.log('useEffect' )
-        console.log(responseFerqData.FrequencyFile )
+                console.log('useEffect' )
 
         if (!responseFerqData.FrequencyFile) {
             return;
@@ -436,14 +437,14 @@ const Analytics = () => {
                             <Grid item xs={12} sm={6}>
                                 <SubCard title="Note! The defined settings are recommended for the LPA algorithm and any change may harm the results">
                                     <Grid container spacing={1}>
-                                        <LabelSlider
-                                            min={10}
-                                            max={100}
-                                            start={30}
-                                            label="Account Threshold"
-                                            step={1}
-                                            onChange={(e, value) => handleFormChange('accountThreshold', value)}
-                                        />
+                                    <LabelSlider
+                                        min={10}
+                                        max={100}
+                                        start={accountThreshold} // ערך נוכחי
+                                        label="Account Threshold"
+                                        step={1}
+                                        onChange={(e, value) => handleFormChange('accountThreshold', value)}
+                                    />
                                         <LabelSlider
                                             min={1000}
                                             max={100000}
