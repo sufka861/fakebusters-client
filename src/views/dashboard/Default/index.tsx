@@ -216,9 +216,7 @@ const WidgetData = () => {
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button variant="text" size="small">
-                            View all Results
-                        </Button>
+
                     </CardActions>
                 </MainCard>
             </Grid>
@@ -229,9 +227,7 @@ const WidgetData = () => {
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
-                        <Button variant="text" size="small">
-                            View all Results
-                        </Button>
+
                     </CardActions>
                 </MainCard>
             </Grid>
