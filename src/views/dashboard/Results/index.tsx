@@ -4,9 +4,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    TextField,
+    InputAdornment
+} from '@mui/material';
+import { Search as SearchIcon } from '@mui/icons-material';
 
 import DetailsAnalyst from './detailsAnalyst';
-import UserList from './UserList';
 import ResultsLPA from './ResultsLPA';
 import ReportCards from '../Analytics/ReportCard';
 import ApexBarChart from 'views/dashboard/Analytics/ApexBarChart';
@@ -26,6 +37,8 @@ const Results = () => {
     const [userProjects, setUserProjects] = useState([]);
     const [selectedProjectData, setSelectedProjectData] = useState(null);
     const [projectDetails, setProjectDetails] = useState([]);
+    const [filter, setFilter] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: '', direction: 'asc' });
 
     const userId = '6650be951fdcf7cb4e278258'; // TODO: Replace with dynamic user ID
 
@@ -105,6 +118,34 @@ const Results = () => {
         }
     };
 
+    const handleFilterChange = (event) => {
+        setFilter(event.target.value.toLowerCase());
+    };
+
+    const filteredProjects = projectDetails.filter((project) => {
+        return Object.values(project).some((value) => 
+            String(value).toLowerCase().includes(filter)
+        );
+    });
+
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedProjects = filteredProjects.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+
     if (!responseFerqData || !chartData || !chartData.categories || !chartData.data) {
         return (
             <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
@@ -121,20 +162,75 @@ const Results = () => {
                         <Typography variant="h5" align="center">
                             Previous Results
                         </Typography>
-                        {projectDetails.length > 0 ? (
-                            <Box mt={2}>
-                                {projectDetails.map((project) => (
-                                    <Button
-                                        key={project.file_id}
-                                        variant="outlined"
-                                        color="primary"
-                                        onClick={() => fetchProjectData(project.file_id)}
-                                        style={{ margin: '5px' }}
-                                    >
-                                        {project.project_name} - {new Date(project.date_created).toLocaleString()} - {project.file_id}
-                                    </Button>
-                                ))}
-                            </Box>
+                        <TextField
+                            label="Search"
+                            value={filter}
+                            onChange={handleFilterChange}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                )
+                            }}
+                            fullWidth
+                            margin="normal"
+                        />
+                        {sortedProjects.length > 0 ? (
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>
+                                                <TableSortLabel
+                                                    active={sortConfig.key === 'project_name'}
+                                                    direction={sortConfig.direction}
+                                                    onClick={() => handleSort('project_name')}
+                                                >
+                                                    Project Name
+                                                </TableSortLabel>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TableSortLabel
+                                                    active={sortConfig.key === 'date_created'}
+                                                    direction={sortConfig.direction}
+                                                    onClick={() => handleSort('date_created')}
+                                                >
+                                                    Date Created
+                                                </TableSortLabel>
+                                            </TableCell>
+                                            <TableCell>
+                                                <TableSortLabel
+                                                    active={sortConfig.key === 'file_id'}
+                                                    direction={sortConfig.direction}
+                                                    onClick={() => handleSort('file_id')}
+                                                >
+                                                    File ID
+                                                </TableSortLabel>
+                                            </TableCell>
+                                            <TableCell>Action</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {sortedProjects.map((project) => (
+                                            <TableRow key={project.file_id}>
+                                                <TableCell>{project.project_name}</TableCell>
+                                                <TableCell>{new Date(project.date_created).toLocaleString()}</TableCell>
+                                                <TableCell>{project.file_id}</TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        variant="outlined"
+                                                        color="primary"
+                                                        onClick={() => fetchProjectData(project.file_id)}
+                                                    >
+                                                        Load
+                                                    </Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
                         ) : (
                             <Typography variant="body1" align="center">
                                 No previous results available.
