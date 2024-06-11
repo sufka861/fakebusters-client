@@ -4,17 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TableSortLabel,
-    TextField,
-    InputAdornment
-} from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, TextField, InputAdornment } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
 import DetailsAnalyst from './detailsAnalyst';
@@ -123,9 +113,7 @@ const Results = () => {
     };
 
     const filteredProjects = projectDetails.filter((project) => {
-        return Object.values(project).some((value) => 
-            String(value).toLowerCase().includes(filter)
-        );
+        return Object.values(project).some((value) => String(value).toLowerCase().includes(filter));
     });
 
     const handleSort = (key) => {
@@ -213,7 +201,14 @@ const Results = () => {
                                     </TableHead>
                                     <TableBody>
                                         {sortedProjects.map((project) => (
-                                            <TableRow key={project.file_id}>
+                                            <TableRow
+                                                key={project.file_id}
+                                                sx={{
+                                                    '&:hover': {
+                                                        backgroundColor: '#f5f5f5'
+                                                    }
+                                                }}
+                                            >
                                                 <TableCell>{project.project_name}</TableCell>
                                                 <TableCell>{new Date(project.date_created).toLocaleString()}</TableCell>
                                                 <TableCell>{project.file_id}</TableCell>
