@@ -2,7 +2,7 @@
 import { FormattedMessage } from 'react-intl';
 
 // assets
-import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff,IconGraph } from '@tabler/icons-react';
+import { IconDashboard, IconDeviceAnalytics, IconClipboardList,IconBookOff,IconGraph,IconFileReport } from '@tabler/icons-react';
 
 // type
 import { NavItemType } from 'types';
@@ -12,7 +12,8 @@ const icons = {
     IconDeviceAnalytics: IconDeviceAnalytics,
     IconClipboardList:IconClipboardList,
     IconBookFilled:IconBookOff,
-    IconGraph:IconGraph
+    IconGraph:IconGraph,
+    IconFileReport:IconFileReport
 };
 
 // ==============================|| MENU ITEMS - DASHBOARD ||============================== //
@@ -54,7 +55,23 @@ const dashboard: NavItemType = {
             url: '/dashboard/vocabularies',
             icon: icons.IconBookFilled,
             breadcrumbs: true
-        }
+        },
+        {
+            id: 'structure',
+            title: <FormattedMessage id="Network Analysis" />,
+            type: 'item',
+            url: '/dashboard/structure',
+            icon: icons.IconGraph,
+            breadcrumbs: true
+        },
+        {
+            id: 'resultsStructure',
+            title: <FormattedMessage id="Network Analysis Results" />,
+            type: 'item',
+            url: '/dashboard/resultsStructure',
+            icon: icons.IconFileReport,
+            breadcrumbs: true
+        },
     ]
 };
 
