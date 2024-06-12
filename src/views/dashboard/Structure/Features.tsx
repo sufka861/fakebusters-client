@@ -94,7 +94,6 @@ export default function Features({ graphData, selected, setSelected, cosineSimil
             }
 
             const data = await response.json();
-            console.log('Success:', data);
             setCosineSimilarityData(data); // Set cosineSimilarityData with the received similarity data
             setShowResults(true); // Show the results
         } catch (error) {

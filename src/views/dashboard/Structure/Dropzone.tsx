@@ -6,6 +6,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import UploadSingleFile from 'ui-component/third-party/dropzone/SingleFile';
 import { gridSpacing } from 'store/constant';
 import SingleFileUpload from 'ui-component/third-party/dropzone/SingleFile';
+import InputLabel from 'ui-component/extended/Form/InputLabel';
 
 // dropzone.tsx
 
@@ -15,8 +16,9 @@ const Dropzone = ({ fileRef }) => {
     const [list, setList] = useState(false);
 
     return (
-        <Grid item xs={12}>
-            <MainCard title="Upload CSV File">
+        <Grid >
+            <MainCard>
+            <InputLabel>Upload CSV File</InputLabel>
                 <Formik
                     initialValues={{ files: null }}
                     onSubmit={(values: any) => {
@@ -46,7 +48,7 @@ const Dropzone = ({ fileRef }) => {
                         </form>
                     )}
                 </Formik>
-            </MainCard>
+         </MainCard>
         </Grid>
     );
 };
