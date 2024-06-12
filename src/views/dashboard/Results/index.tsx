@@ -176,7 +176,7 @@ const Results = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} md={6} lg={6}>
-                <MainCard title="Sockpuppet Detection Analysis">
+                <MainCard title="Sockpuppet Value Analysis">
                     <SockpuppetDetectionChartCard sockpuppetData={sockpuppetData} title="" />
                 </MainCard>
             </Grid>
