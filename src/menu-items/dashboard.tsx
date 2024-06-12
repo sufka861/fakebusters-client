@@ -30,7 +30,7 @@ const dashboard: NavItemType = {
             type: 'item',
             url: '/dashboard/default',
             icon: icons.IconDashboard,
-            breadcrumbs: true
+            breadcrumbs: false
         },
         {
             id: 'newAnalysis',

@@ -154,7 +154,7 @@ const Results = () => {
     return (
         <Grid container spacing={gridSpacing}>
             <ReportCards responseFerqData={responseFerqData} />
-            <Grid item xs={5}>
+            <Grid item xs={12}>
                 <DetailsAnalyst projectName={projectName} email={email} threshold={threshold} signature={signature} />
             </Grid>
             <Grid item xs={12}>
@@ -176,7 +176,7 @@ const Results = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} md={6} lg={6}>
-                <MainCard title="Sockpuppet Detection Analysis">
+                <MainCard title="Sockpuppet Value Analysis">
                     <SockpuppetDetectionChartCard sockpuppetData={sockpuppetData} title="" />
                 </MainCard>
             </Grid>
