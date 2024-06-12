@@ -238,7 +238,7 @@ const WidgetData = () => {
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12} lg={4}>
                 <UserCountCard 
-                    primary="Number of Checked Users" 
+                    primary="Accounts Analysed" 
                     secondary={checkedUsersCount ? checkedUsersCount.toString() : '0'} 
                     iconPrimary={AccountCircleTwoTone} 
                     color="secondary.main" 
@@ -246,7 +246,7 @@ const WidgetData = () => {
             </Grid>
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
-                    primary="Number of LPA Analyses" 
+                    primary="LPA Analysis" 
                     secondary={lpaCount ? lpaCount.toString() : '0'} 
                     iconPrimary={DescriptionTwoToneIcon} 
                     color="primary.dark" 
@@ -254,7 +254,7 @@ const WidgetData = () => {
             </Grid>
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
-                    primary="Number of Structural Analyses" 
+                    primary="Network Analysis" 
                     secondary={structuralAnalysisCount ? structuralAnalysisCount.toString() : '0'} 
                     iconPrimary={AssessmentOutlinedIcon} 
                     color="success.dark" 
@@ -274,7 +274,7 @@ const WidgetData = () => {
                     }}
                 >
                     <Typography variant="h6" gutterBottom sx={{ mr: 2 }}>
-                        Number of People to Display in Tables
+                        Show top number of users
                     </Typography>
                     <Slider
                         value={filter}
@@ -291,7 +291,7 @@ const WidgetData = () => {
             </Grid>
          
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard  title={`LPA Analysis - ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
+                <MainCard  title={`LPA Analysis- Top ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
                         <ProjectTable data={userDetails.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
@@ -303,7 +303,7 @@ const WidgetData = () => {
             </Grid>
          
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard    title={`Network Analysis - ${filter} Results`} content={false} sx={{ boxShadow: 3 }}>
+                <MainCard    title={`Network Analysis - Top ${filter} Results`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
                         <ProjectTable data={networkSinglesData.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
@@ -313,7 +313,7 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`LPA - ${filter} Results`} content={false}>
+                <MainCard title={`LPA - Top ${filter} Results`} content={false}>
                     <CardContent sx={{ p: 0 }}>
                         <PairsResultsTable data={pairsData.slice(0, filter)} /> 
                     </CardContent>
@@ -324,7 +324,7 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`Network Analysis - ${filter} Results`} content={false}>
+                <MainCard title={`Network Analysis - Top ${filter} Results`} content={false}>
                     <CardContent sx={{ p: 0 }}>
                         <PairsResultsTable data={networkPairsData.slice(0, filter)} /> 
                     </CardContent>
