@@ -41,6 +41,7 @@ const PrevResults = ({
     stats
 }) => {
     const [tabValue, setTabValue] = useState(0);
+    console.log(stats)
     const theme = useTheme();
     const [cosineSimilarityData, setCosineSimilarityData] = useState<CosData>({ similarity_list: [] })
     const [selected, setSelected] = useState<string[]>([]); 
@@ -58,7 +59,9 @@ const PrevResults = ({
     
     return (
         <Grid justifyContent="center" >
+            <MainCard sx={{ mb:2 }}>
             <Grid item xs={12}>
+            
                 <Box textAlign="center" >
                     <TextField
                         label="Search"
@@ -75,6 +78,7 @@ const PrevResults = ({
                         margin="normal"
                     />
                     {sortedProjects.length > 0 ? (
+                         
                         <TableContainer>
                             <Table>
                                 <TableHead>
@@ -136,6 +140,7 @@ const PrevResults = ({
                                 </TableBody>
                             </Table>
                         </TableContainer>
+                        
                     ) : (
                         <Typography variant="body1" align="center">
                             No previous results available.
@@ -143,6 +148,8 @@ const PrevResults = ({
                     )}
                 </Box>
             </Grid>
+            </MainCard>
+           
             {selectedProjectData && (
                 <Grid item xs={12}>
                     <MainCard title={selectedProjectData.project_name}>
@@ -227,7 +234,9 @@ const PrevResults = ({
                 </Grid>
             )}
         </Grid>
+        
     );
+    
 };
 
 export default PrevResults;

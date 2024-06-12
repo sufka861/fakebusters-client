@@ -19,7 +19,7 @@ const DropzoneWrapper = styled('div')(({ theme }) => ({
     outline: 'none',
     overflow: 'hidden',
     position: 'relative',
-    padding: theme.spacing(5, 1),
+    padding: theme.spacing(2, 1),
     borderRadius: theme.shape.borderRadius,
     transition: theme.transitions.create('padding'),
     backgroundColor: theme.palette.background.paper,
@@ -61,8 +61,7 @@ const SingleFileUpload = ({ error, file, setFieldValue, fileRef, sx, ...other }:
                 {...getRootProps()}
                 sx={{
                     ...(isDragActive && { opacity: 0.72 }),
-                    ...((isDragReject || error) && { color: 'error.main', borderColor: 'error.light', bgcolor: 'error.lighter' }),
-                    ...(file && { padding: '12% 0' })
+                    ...((isDragReject || error) && { color: 'error.main', borderColor: 'error.light', bgcolor: 'error.lighter' })
                 }}
             >
                 <input {...getInputProps()} />
