@@ -22,7 +22,7 @@ const Results = () => {
     const navigate = useNavigate();
 
     const state = location.state || {}; // Fallback to empty object if no state is passed
-    const { resultsLPA, sockpuppetData, responseFerqData, chartData } = state;
+    const { resultsLPA, sockpuppetData, responseFerqData, chartData, projectName, email, threshold, signature } = state;
 
     const [refreshKey, setRefreshKey] = useState(0);
     const [userProjects, setUserProjects] = useState([]);
@@ -154,7 +154,7 @@ const Results = () => {
         <Grid container spacing={gridSpacing}>
             <ReportCards responseFerqData={responseFerqData} />
             <Grid item xs={5}>
-                <DetailsAnalyst />
+                <DetailsAnalyst projectName={projectName} email={email} threshold={threshold} signature={signature} />
             </Grid>
             <Grid item xs={12}>
                 <MainCard title="SockPuppet Distance">
