@@ -14,6 +14,7 @@ const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics
 const DashboardResults = Loadable(lazy(() => import('views/dashboard/Results')));
 const DashboardStructure = Loadable(lazy(() => import('views/dashboard/Structure')));
 const DashboardVocabularies = Loadable(lazy(() => import('views/dashboard/Vocabularies')));
+const DashboardResultsStructure = Loadable(lazy(() => import('views/dashboard/ResultsStructure')));
 
 
 
@@ -696,12 +697,16 @@ const MainRoutes = {
             element: <DashboardResults />
         },
         {
-            path: '/dashboard/structure',
-            element: <DashboardStructure />
-        },
-        {
             path: '/dashboard/vocabularies',
             element: <DashboardVocabularies />
+        },       
+        {
+            path: '/dashboard/structure',
+            element: <DashboardStructure />
+        },        
+        {
+            path: '/dashboard/resultsStructure',
+            element: <DashboardResultsStructure />
         }
     ]
 };
