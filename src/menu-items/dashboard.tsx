@@ -66,7 +66,7 @@ const dashboard: NavItemType = {
         },
         {
             id: 'resultsStructure',
-            title: <FormattedMessage id="Network Analysis Results" />,
+            title: <FormattedMessage id="Network Results" />,
             type: 'item',
             url: '/dashboard/resultsStructure',
             icon: icons.IconFileReport,
