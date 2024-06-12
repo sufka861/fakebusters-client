@@ -36,17 +36,19 @@ const WidgetData = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch('https://fakebusters-server.onrender.com/api/suspects/6650be951fdcf7cb4e278258');
-                const LPAresponse = await fetch('https://fakebusters-server.onrender.com/api/lpa/');
+                const LPAresponse = await fetch('https://fakebusters-server.onrender.com/api/users/6650be951fdcf7cb4e278258');
                 const statsResponse = await fetch('https://fakebusters-server.onrender.com/api/suspects/structure/6650be951fdcf7cb4e278258');
                 
                 const data = await response.json();
-                const lpaData = await LPAresponse.json();
+                const lpaDataArray = await LPAresponse.json();
                 const statsData = await statsResponse.json();
-                
+
+                const lpaData = lpaDataArray[0]; // Access the first element in the array
+
                 setSinglesData(data.singles || []); 
                 setCheckedUsersCount((data.singles || []).length);
-                setLpaCount(lpaData.length || 0);
-                setStructuralAnalysisCount(statsData.length || 0);
+                setLpaCount(lpaData.project_id ? lpaData.project_id.length : 0);
+                setStructuralAnalysisCount(lpaData.graph_id ? lpaData.graph_id.length : 0);
 
                 const userDetailsPromises = (data.singles || []).map(async (single) => {
                     const username = single.corpus;
@@ -254,7 +256,7 @@ const WidgetData = () => {
             </Grid>
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
-                    primary="Number of Structural Analyses" 
+                    primary="Number of Network Analyses" 
                     secondary={structuralAnalysisCount ? structuralAnalysisCount.toString() : '0'} 
                     iconPrimary={AssessmentOutlinedIcon} 
                     color="success.dark" 
