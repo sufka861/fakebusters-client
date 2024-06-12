@@ -26,7 +26,8 @@ const WidgetData = () => {
     const [singlesData, setSinglesData] = useState([]);
     const [userDetails, setUserDetails] = useState([]);
     const [pairsData, setPairsData] = useState([]);
-    const [countAnalytics, setCountAnalytics] = useState([]);
+    const [networkSinglesData, setNetworkSinglesData] = useState([]);
+    const [networkPairsData, setNetworkPairsData] = useState([]);
     const [checkedUsersCount, setCheckedUsersCount] = useState(0);
     const [lpaCount, setLpaCount] = useState(0);
     const [structuralAnalysisCount, setStructuralAnalysisCount] = useState(0);
@@ -36,19 +37,18 @@ const WidgetData = () => {
             try {
                 const response = await fetch('https://fakebusters-server.onrender.com/api/suspects/6650be951fdcf7cb4e278258');
                 const LPAresponse = await fetch('https://fakebusters-server.onrender.com/api/lpa/');
-                // const statsResponse = await fetch('https://fakebusters-server.onrender.com/stats');
+                const statsResponse = await fetch('https://fakebusters-server.onrender.com/api/suspects/structure/6650be951fdcf7cb4e278258');
                 
                 const data = await response.json();
                 const lpaData = await LPAresponse.json();
-                // const statsData = await statsResponse.json();
+                const statsData = await statsResponse.json();
                 
-                console.log(lpaData); 
-                setSinglesData(data.singles); 
-                setCheckedUsersCount(data.singles.length);
-                setLpaCount(lpaData.length);
-                // setStructuralAnalysisCount(statsData.structuralAnalyses);
+                setSinglesData(data.singles || []); 
+                setCheckedUsersCount((data.singles || []).length);
+                setLpaCount(lpaData.length || 0);
+                setStructuralAnalysisCount(statsData.length || 0);
 
-                const userDetailsPromises = data.singles.map(async (single) => {
+                const userDetailsPromises = (data.singles || []).map(async (single) => {
                     const username = single.corpus;
                     try {
                         const userResponse = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
@@ -87,7 +87,7 @@ const WidgetData = () => {
                 const userDetailsResults = await Promise.all(userDetailsPromises);
                 setUserDetails(userDetailsResults);
 
-                const pairsDetailsPromises = data.pairs.map(async (pair) => {
+                const pairsDetailsPromises = (data.pairs || []).map(async (pair) => {
                     const [user1, user2] = await Promise.all([
                         axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair['Corpus 1']}`),
                         axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair['Corpus 2']}`)
@@ -131,6 +131,97 @@ const WidgetData = () => {
 
                 const pairsDetailsResults = await Promise.all(pairsDetailsPromises);
                 setPairsData(pairsDetailsResults);
+
+                // Fetch Network Analysis Data
+                const networkSingles = statsData.singles || [];
+                const networkPairs = statsData.pairs || [];
+
+                // Process Network Analysis Singles
+                const networkSinglesDetailsPromises = networkSingles.map(async (single) => {
+                    const username = single.corpus;
+                    try {
+                        const userResponse = await axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${username}`);
+                        const profileData = userResponse.data?.[0];
+                        
+                        let status = 'Active';
+                        if (profileData?.errors) {
+                            if (profileData.errors[0].title === 'Not Found Error') {
+                                status = 'User not found';
+                            } else if (profileData.errors[0].title === 'Forbidden') {
+                                status = 'User suspended';
+                            }
+                        } else if (!profileData || !profileData.data || !profileData.data[0]) {
+                            status = 'No profile data';
+                        }
+
+                        return {
+                            name: profileData?.data?.[0]?.username || username,
+                            username,
+                            image: profileData?.data?.[0]?.profile_image_url || '',
+                            averageValue: parseFloat(single.averageValue), // Ensure value is parsed as number
+                            status,
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching profile data for ${username}:`, error);
+                        return {
+                            name: username,
+                            username,
+                            image: '',
+                            averageValue: parseFloat(single.averageValue), // Ensure value is parsed as number
+                            status: 'Error fetching profile data',
+                        };
+                    }
+                });
+
+                const networkSinglesDetailsResults = await Promise.all(networkSinglesDetailsPromises);
+                setNetworkSinglesData(networkSinglesDetailsResults);
+
+                // Process Network Analysis Pairs
+                const networkPairsDetailsPromises = networkPairs.map(async (pair) => {
+                    const [user1, user2] = await Promise.all([
+                        axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair.node1}`),
+                        axios.get(`https://fakebusters-server.onrender.com/api/profiles/profile?username=${pair.node2}`)
+                    ]);
+
+                    const user1Data = user1.data?.[0];
+                    const user2Data = user2.data?.[0];
+
+                    let user1Status = 'Active';
+                    if (user1Data?.errors) {
+                        if (user1Data.errors[0].title === 'Not Found Error') {
+                            user1Status = 'User not found';
+                        } else if (user1Data.errors[0].title === 'Forbidden') {
+                            user1Status = 'User suspended';
+                        }
+                    } else if (!user1Data || !user1Data.data || !user1Data.data[0]) {
+                        user1Status = 'No profile data';
+                    }
+
+                    let user2Status = 'Active';
+                    if (user2Data?.errors) {
+                        if (user2Data.errors[0].title === 'Not Found Error') {
+                            user2Status = 'User not found';
+                        } else if (user2Data.errors[0].title === 'Forbidden') {
+                            user2Status = 'User suspended';
+                        }
+                    } else if (!user2Data || !user2Data.data || !user2Data.data[0]) {
+                        user2Status = 'No profile data';
+                    }
+
+                    return {
+                        user1Name: user1Data?.data?.[0]?.username || pair.node1,
+                        user1Image: user1Data?.data?.[0]?.profile_image_url || '',
+                        user1Status,
+                        user2Name: user2Data?.data?.[0]?.username || pair.node2,
+                        user2Image: user2Data?.data?.[0]?.profile_image_url || '',
+                        user2Status,
+                        value: parseFloat(pair.similarity), // Ensure value is parsed as number
+                    };
+                });
+
+                const networkPairsDetailsResults = await Promise.all(networkPairsDetailsPromises);
+                setNetworkPairsData(networkPairsDetailsResults);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -148,7 +239,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4}>
                 <UserCountCard 
                     primary="Number of Checked Users" 
-                    secondary={checkedUsersCount.toString()} 
+                    secondary={checkedUsersCount ? checkedUsersCount.toString() : '0'} 
                     iconPrimary={AccountCircleTwoTone} 
                     color="secondary.main" 
                 />
@@ -156,7 +247,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
                     primary="Number of LPA Analyses" 
-                    secondary={lpaCount.toString()} 
+                    secondary={lpaCount ? lpaCount.toString() : '0'} 
                     iconPrimary={DescriptionTwoToneIcon} 
                     color="primary.dark" 
                 />
@@ -164,7 +255,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
                     primary="Number of Structural Analyses" 
-                    secondary={structuralAnalysisCount.toString()} 
+                    secondary={structuralAnalysisCount ? structuralAnalysisCount.toString() : '0'} 
                     iconPrimary={AssessmentOutlinedIcon} 
                     color="success.dark" 
                 />
@@ -214,7 +305,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard    title={`Network Analysis - ${filter} Results`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
-                        <ProjectTable data={[]} /> {/* Pass empty array or another dataset here */}
+                        <ProjectTable data={networkSinglesData.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
@@ -235,7 +326,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard title={`Network Analysis - ${filter} Results`} content={false}>
                     <CardContent sx={{ p: 0 }}>
-                        <PairsResultsTable data={pairsData.slice(0, filter)} /> 
+                        <PairsResultsTable data={networkPairsData.slice(0, filter)} /> 
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>

@@ -53,13 +53,17 @@ const Analytics = () => {
     const filesRef = useRef([]);
     const [showForm, setShowForm] = useState(false);
     const [freqFileName, setFreqFileName] = useState([]);
-    const [projectName, setProjectName] = useState('');
-    const [email, setEmail] = useState('');
-    const [threshold, setThreshold] = useState(0.5);
-
-    const [signature, setSignature] = useState(200);
-    const [accountThreshold, setAccountThreshold] = useState(30);
-    const [wordThreshold, setWordThreshold] = useState(1000);
+    const [formAnalysisData, setFormAnalysisData] = useState({
+        projectName: '',
+        email: '',
+        threshold: 0.5,
+        signature: 500,
+        typeOfAnalysis: 1,
+        saveFrequencyFile: true,
+        saveSettings: false,
+        accountThreshold: 30,
+        wordThreshold: 1000
+    });
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
     const [showHoverDataCard, setHoverDataCard] = useState({ num_authors: '', max_words: '', average_words_per_user: '' });
@@ -71,7 +75,7 @@ const Analytics = () => {
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
-    const [startConnection, setStartConnection]= useState(false)
+    const [startConnection, setStartConnection] = useState(false);
     const [responseFerq, setResponseData] = useState({
         word: null,
         freq: null,
@@ -79,15 +83,6 @@ const Analytics = () => {
         initialAuthorsCount: null,
         initialPostsCount: null,
         FrequencyFile: ''
-    });
-    const [formAnalysisData, setFormAnalysisData] = useState({
-        projectName: '',
-        email: '',
-        threshold: 0.5,
-        signature: 500,
-        typeOfAnalysis: 1,
-        saveFrequencyFile: true,
-        saveSettings: false,
     });
 
     const handleDelete = (namesToDelete) => {
@@ -105,24 +100,16 @@ const Analytics = () => {
     };
 
     const handleFormChange = (field, value) => {
-        console.log(`Field: ${field}, Value: ${value}`);
-        if (field === 'projectName') setProjectName(value);
-        if (field === 'email') setEmail(value);
-        if (field === 'threshold') setThreshold(value);
-        if (field === 'signature') setSignature(value);
-        if (field === 'wordThreshold') setWordThreshold(value);
-        if (field === 'accountThreshold') setAccountThreshold(value);
+        setFormAnalysisData(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
     };
 
     useEffect(() => {
-        console.log('useEffect' )
-                console.log('useEffect' )
-
         if (!responseFerqData.FrequencyFile) {
             return;
         }
-        console.log("useEffect 2")
-        console.log(responseFerqData.FrequencyFile)
 
         const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
         const eventSource = new EventSource(url);
@@ -251,12 +238,7 @@ const Analytics = () => {
 
     const handleStartAnalysis = async () => {
         const data = {
-            projectName: projectName,
-            email: email,
-            threshold: threshold,
-            signature: signature,
-            account_threshold: accountThreshold,
-            wordThreshold: wordThreshold,
+            ...formAnalysisData,
             vocabulary: vocabulary.VocabularyWord,
             isDroppingLinks: isDroppingLinks,
             isDroppingPunctuation: isDroppingPunctuation,
@@ -284,17 +266,16 @@ const Analytics = () => {
                 account: response.data.account,
                 initialAuthorsCount: response.data.initial_authors_count,
                 initialPostsCount: response.data.initial_posts_count,
-                FrequencyFile: 'freq_'+freqFileName
+                FrequencyFile: 'freq_' + freqFileName
             });
-            setStartConnection(true)
+            setStartConnection(true);
             setRefreshKey(prevKey => prevKey + 1);
             setShowChart(true);
         } catch (error) {
             console.error('Error uploading data:', error);
             setIsProcessing(false);
             setShowChart(false);
-            setStartConnection(false)
-
+            setStartConnection(false);
         }
     };
 
@@ -304,7 +285,7 @@ const Analytics = () => {
         handleStartAnalysis();
         setShowForm(false);
         setLoading(false);
-        setUploadFile(false)
+        setUploadFile(false);
     };
 
     const handleNext = () => {
@@ -368,7 +349,7 @@ const Analytics = () => {
                                             <TextField
                                                 fullWidth
                                                 placeholder="Enter project name"
-                                                value={projectName}
+                                                value={formAnalysisData.projectName}
                                                 onChange={(e) => handleFormChange('projectName', e.target.value)}
                                             />
                                         </Grid>
@@ -378,7 +359,7 @@ const Analytics = () => {
                                                 type="email"
                                                 fullWidth
                                                 placeholder="Email"
-                                                value={email}
+                                                value={formAnalysisData.email}
                                                 onChange={(e) => handleFormChange('email', e.target.value)}
                                             />
                                         </Grid>
@@ -390,7 +371,7 @@ const Analytics = () => {
                                                 <LabelSlider
                                                     min={0.1}
                                                     max={1}
-                                                    start={threshold}
+                                                    start={formAnalysisData.threshold}
                                                     label="Threshold"
                                                     step={0.1}
                                                     onChange={(e, value) => handleFormChange('threshold', value)}
@@ -398,7 +379,7 @@ const Analytics = () => {
                                                 <LabelSlider
                                                     min={100}
                                                     max={2000}
-                                                    start={signature}
+                                                    start={formAnalysisData.signature}
                                                     label="Signature"
                                                     color="secondary"
                                                     step={100}
@@ -441,7 +422,7 @@ const Analytics = () => {
                                     <LabelSlider
                                         min={10}
                                         max={100}
-                                        start={accountThreshold} // ערך נוכחי
+                                        start={formAnalysisData.accountThreshold}
                                         label="Account Threshold"
                                         step={1}
                                         onChange={(e, value) => handleFormChange('accountThreshold', value)}
@@ -449,7 +430,7 @@ const Analytics = () => {
                                         <LabelSlider
                                             min={1000}
                                             max={100000}
-                                            start={showHoverDataCard.average_words_per_user}
+                                            start={formAnalysisData.wordThreshold}
                                             label="Word Threshold"
                                             color="secondary"
                                             step={100}
