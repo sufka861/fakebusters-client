@@ -154,7 +154,7 @@ const Results = () => {
     return (
         <Grid container spacing={gridSpacing}>
             <ReportCards responseFerqData={responseFerqData} />
-            <Grid item xs={5}>
+            <Grid item xs={12}>
                 <DetailsAnalyst projectName={projectName} email={email} threshold={threshold} signature={signature} />
             </Grid>
             <Grid item xs={12}>
