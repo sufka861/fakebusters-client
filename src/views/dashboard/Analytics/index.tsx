@@ -26,7 +26,6 @@ import EnhancedTable from './TableData';
 import TableBasic from './TableBasic';
 import ApexColumnChart from './ApexColumnChart';
 
-// table data
 function createData(word, frequency) {
     return { word, frequency };
 }
@@ -48,6 +47,7 @@ const Analytics = () => {
         initialPostsCount: null,
         FrequencyFile: ''
     });
+
     const [uploadFile, setUploadFile] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const filesRef = useRef([]);
@@ -61,9 +61,10 @@ const Analytics = () => {
         typeOfAnalysis: 1,
         saveFrequencyFile: true,
         saveSettings: false,
-        accountThreshold: 30,
+        account_threshold: 30,
         wordThreshold: 1000
     });
+
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
     const [showHoverDataCard, setHoverDataCard] = useState({ num_authors: '', max_words: '', average_words_per_user: '' });
@@ -76,24 +77,16 @@ const Analytics = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
     const [startConnection, setStartConnection] = useState(false);
-    const [responseFerq, setResponseData] = useState({
-        word: null,
-        freq: null,
-        account: null,
-        initialAuthorsCount: null,
-        initialPostsCount: null,
-        FrequencyFile: ''
-    });
 
     const handleDelete = (namesToDelete) => {
-        setVocabulary(prev => ({
+        setVocabulary((prev) => ({
             ...prev,
-            VocabularyWord: prev.VocabularyWord.filter(item => !namesToDelete.includes(item.name))
+            VocabularyWord: prev.VocabularyWord.filter((item) => !namesToDelete.includes(item.name))
         }));
     };
 
     const handleAddRow = (newWord) => {
-        setVocabulary(prev => ({
+        setVocabulary((prev) => ({
             ...prev,
             VocabularyWord: [...prev.VocabularyWord, { name: newWord }]
         }));
@@ -107,6 +100,8 @@ const Analytics = () => {
     };
 
     useEffect(() => {
+        console.log('useEffect', responseFerqData.FrequencyFile);
+
         if (!responseFerqData.FrequencyFile) {
             return;
         }
@@ -127,7 +122,7 @@ const Analytics = () => {
                         resultsLPA: data.resultsLPA,
                         chartData,
                         sockpuppetData: data.sockpuppetData,
-                        ...formAnalysisData,
+                        ...formAnalysisData
                     }
                 });
             }
@@ -144,19 +139,19 @@ const Analytics = () => {
     }, [startConnection]);
 
     const handleThresholdSwitchChange = () => {
-        setShowThresholdSettings(prev => !prev);
+        setShowThresholdSettings((prev) => !prev);
     };
 
     const handleThresholdSwitchVocabularyChange = () => {
-        setShowTblholdSettings(prev => !prev);
+        setShowTblholdSettings((prev) => !prev);
     };
 
     const handleDroppingPunctuationSwitchChange = () => {
-        setIsDroppingPunctuation(prev => !prev);
+        setIsDroppingPunctuation((prev) => !prev);
     };
 
     const handleDroppingLinksSwitchVocabularyChange = () => {
-        setIsDroppingLinks(prev => !prev);
+        setIsDroppingLinks((prev) => !prev);
     };
 
     useEffect(() => {
@@ -170,7 +165,7 @@ const Analytics = () => {
     const handleUpFiles = async () => {
         const formData = new FormData();
         if (filesRef.current && filesRef.current.length > 0) {
-            filesRef.current.forEach(file => {
+            filesRef.current.forEach((file) => {
                 formData.append('files', file);
             });
             try {
@@ -217,10 +212,10 @@ const Analytics = () => {
                     FreqWord: FreqWord
                 });
 
-                const initialRows = FreqWord.map(item => createData(item[0], item[1]));
+                const initialRows = FreqWord.map((item) => createData(item[0], item[1]));
                 setRows(initialRows);
 
-                setRefreshKey(prevKey => prevKey + 1);
+                setRefreshKey((prevKey) => prevKey + 1);
                 setIsProcessing(false);
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -240,11 +235,11 @@ const Analytics = () => {
         const data = {
             ...formAnalysisData,
             vocabulary: vocabulary.VocabularyWord,
-            isDroppingLinks: isDroppingLinks,
-            isDroppingPunctuation: isDroppingPunctuation,
+            isDroppingLinks,
+            isDroppingPunctuation,
             rowDataFileName: freqFileName,
             topValueWords: showThresholdSettings,
-            showTblholdSettings: showTblholdSettings
+            showTblholdSettings
         };
         console.log('Sending data:', data);
 
@@ -255,7 +250,7 @@ const Analytics = () => {
                 }
             });
             console.log('response:', response);
-            
+
             setChartData({
                 categories: response.data.categories,
                 data: response.data.data
@@ -325,19 +320,30 @@ const Analytics = () => {
                 <>
                     <Grid item xs={12} sm={12} md={12}>
                         <SubCard>
-                            Before we start, it is necessary to pre-process the file you uploaded. You will have access to charts to help you make informed decisions.
+                            Before we start, it is necessary to pre-process the file you uploaded. You will have access to charts to help
+                            you make informed decisions.
                         </SubCard>
                     </Grid>
                     {showPreChart && (
                         <>
                             <Grid item xs={12} sm={6} md={6}>
                                 <SubCard title="Number of Posts per Author Grouped by Post Count Ranges">
-                                    <ApexColumnChart key={refreshKey} categories={chartPreData.categories} data={chartPreData.data} colors={["#4994ec"]} />
+                                    <ApexColumnChart
+                                        key={refreshKey}
+                                        categories={chartPreData.categories}
+                                        data={chartPreData.data}
+                                        colors={['#4994ec']}
+                                    />
                                 </SubCard>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <SubCard title="Number of Words per Author Grouped by Post Count Ranges">
-                                    <ApexColumnChart key={refreshKey} categories={chartWordData.categories} data={chartWordData.data} colors={"#613cb0"} />
+                                    <ApexColumnChart
+                                        key={refreshKey}
+                                        categories={chartWordData.categories}
+                                        data={chartWordData.data}
+                                        colors={'#613cb0'}
+                                    />
                                 </SubCard>
                             </Grid>
 
@@ -419,14 +425,14 @@ const Analytics = () => {
                             <Grid item xs={12} sm={6}>
                                 <SubCard title="Note! The defined settings are recommended for the LPA algorithm and any change may harm the results">
                                     <Grid container spacing={1}>
-                                    <LabelSlider
-                                        min={10}
-                                        max={100}
-                                        start={formAnalysisData.accountThreshold}
-                                        label="Account Threshold"
-                                        step={1}
-                                        onChange={(e, value) => handleFormChange('accountThreshold', value)}
-                                    />
+                                        <LabelSlider
+                                            min={10}
+                                            max={100}
+                                            start={formAnalysisData.account_threshold}
+                                            label="Account Threshold"
+                                            step={1}
+                                            onChange={(e, value) => handleFormChange('account_threshold', value)}
+                                        />
                                         <LabelSlider
                                             min={1000}
                                             max={100000}
@@ -495,7 +501,11 @@ const Analytics = () => {
             )}
             {isProcessing && (
                 <Grid item xs={12} lg={12} sm={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <MainCardAnalyics title="Your file has been uploaded! We started working!" titleStyle={{ textAlign: 'center' }} style={{ width: '100%' }}>
+                    <MainCardAnalyics
+                        title="Your file has been uploaded! We started working!"
+                        titleStyle={{ textAlign: 'center' }}
+                        style={{ width: '100%' }}
+                    >
                         <Typography variant="body1" align="center">
                             {sentences[sentenceIndex]}
                         </Typography>
@@ -512,12 +522,22 @@ const Analytics = () => {
                     <ReportCards responseFerqData={responseFerqData} />
                     <Grid item xs={12} md={6} lg={6}>
                         <MainCard title="Highest frequency of words 1-10">
-                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(0, 10)} data={chartData.data.slice(0, 10)} bgColor={"#4994ec"} />
+                            <ApexBarChart
+                                key={refreshKey}
+                                categories={chartData.categories.slice(0, 10)}
+                                data={chartData.data.slice(0, 10)}
+                                bgColor={'#4994ec'}
+                            />
                         </MainCard>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6}>
                         <MainCard title="Highest frequency of words 11-20">
-                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(10, 20)} data={chartData.data.slice(10, 20)} bgColor={"#613cb0"} />
+                            <ApexBarChart
+                                key={refreshKey}
+                                categories={chartData.categories.slice(10, 20)}
+                                data={chartData.data.slice(10, 20)}
+                                bgColor={'#613cb0'}
+                            />
                         </MainCard>
                     </Grid>
                 </>

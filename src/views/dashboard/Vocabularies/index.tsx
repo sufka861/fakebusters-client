@@ -9,6 +9,8 @@ import CardContent from '@mui/material/CardContent';
 import { Container, Grid } from '@mui/material';
 import { gridSpacing } from 'store/constant';
 import MainCard from 'ui-component/cards/MainCard';
+import AddIcon from '@mui/icons-material/Add';
+import IconButton from '@mui/material/IconButton';
 
 interface VocabularyData {
   id: string;
@@ -108,6 +110,14 @@ const Vocabularies: React.FC = () => {
               </Card>
             </Grid>
           ))}
+                <Grid item>
+                <IconButton sx={{ backgroundColor: '#5e35b1', color: 'white','&:hover': {
+                  backgroundColor: '#ede7f6',
+                  color: 'black'
+                } }} size="large" aria-label="add icon">
+              <AddIcon />
+            </IconButton>
+                </Grid>
         </Grid>
         </Grid>
         </Grid>

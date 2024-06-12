@@ -9,11 +9,12 @@ const convertTypes = [
     { label: 'Textual and Structural analysis', id: 3 }
 ];
 
-const DetailsAnalyst = () => {
+const DetailsAnalyst = ({ projectName, email, threshold, signature }: { projectName: string, email: string, threshold: number, signature: string}) => {
     const gridSpacing = 2;
     const location = useLocation();
     const state = location.state || {};
-    const { projectName, email, threshold, signature, responseFerqData, typeOfAnalysis } = state;
+    // const { projectName, email, threshold, signature, responseFerqData, typeOfAnalysis } = state;
+    const { responseFerqData, typeOfAnalysis } = state;
     const analysisType = convertTypes.find((type) => type.id === typeOfAnalysis)?.label || 'Unknown Type';
 
     return (
@@ -69,7 +70,7 @@ const DetailsAnalyst = () => {
                                     <Typography variant="subtitle1">
                                         All accounts:{' '}
                                         <Typography component="span" variant="body2">
-                                            {responseFerqData.initiaAuthorsCount}
+                                            {responseFerqData.initialAuthorsCount}
                                         </Typography>
                                     </Typography>
                                     <Typography variant="subtitle1">

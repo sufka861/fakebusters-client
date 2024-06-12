@@ -12,7 +12,7 @@ function ReportCards({ responseFerqData }) {
     return (
         <>
             <Grid item xs={12} lg={3} sm={6}>
-                <Tooltip title="Sum of terms found during the initial data processing." enterTouchDelay={0}>
+                <Tooltip title="Sum of unique terms found during the initial data processing." enterTouchDelay={0}>
                     <div>
                         <ReportCard primary={responseFerqData.word} secondary="Terms count" color="secondary.main" iconPrimary={AssessmentOutlinedIcon} />
                     </div>
@@ -26,7 +26,7 @@ function ReportCards({ responseFerqData }) {
                 </Tooltip>
             </Grid>
             <Grid item xs={12} lg={3} sm={6}>
-    <Tooltip title={`Represents the size of the dataset processed by the LPA algorithm. Average per account: ${(responseFerqData.freq / responseFerqData.account).toFixed(2)} Words.`} enterTouchDelay={0}>
+    <Tooltip title={`Sum of the dataset processed by the LPA algorithm after preprocessing. Average per account: ${(responseFerqData.freq / responseFerqData.account).toFixed(2)} Terms.`} enterTouchDelay={0}>
         <div>
             <ReportCard primary={responseFerqData.freq} secondary="Term Frequency Size" color="success.dark" iconPrimary={DescriptionTwoToneIcon} />
         </div>
@@ -36,7 +36,7 @@ function ReportCards({ responseFerqData }) {
             <Grid item xs={12} lg={3} sm={6}>
                 <Tooltip title="Fraction of accounts that proceed to the LPA - accounts that match the preprocessing filters" enterTouchDelay={0}>
                     <div>
-                        <ReportCard primary={`${responseFerqData.account}/${responseFerqData.initialAuthorsCount}`} secondary="Processed Accounts / Total Accounts" color="primary.main" iconPrimary={AccountCircleTwoTone} />
+                        <ReportCard primary={`${responseFerqData.account}/${responseFerqData.initialAuthorsCount}`} secondary="Processed / Total Accounts" color="primary.main" iconPrimary={AccountCircleTwoTone} />
                     </div>
                 </Tooltip>
             </Grid>

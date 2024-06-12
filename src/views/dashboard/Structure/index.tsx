@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-
+import axios from 'axios';
 // project import
 import useConfig from 'hooks/useConfig';
 import MainCard from 'ui-component/cards/MainCard';
@@ -52,16 +52,21 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     const [error, setError] = useState<string | null>(null);
     const [adj, setAdj] = useState<AdjData | null>(null); 
     const [project_id, setProject_id] = useState(null);
+    //const [fileName, setfileName] = useState("");
+    const [userid, setUserid] = useState('6650be951fdcf7cb4e278258')
+
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
     };
 
     const handleFileUploadSuccess = (data: any) => {
+        console.log(data)
         setGraphData(data);
-        setTabValue(0); // Switch to the "Networks" tab after upload
+        setTabValue(0);
         setProject_id(data._id)
-        console.log(project_id)
+      // setFileName(data.fileName)
+        
     };
 
     const handleSelectChange = (selected: string[]) => {
@@ -76,7 +81,6 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
 
     useEffect(() => {
         if (graphData) {
-            // Fetch nodes data from server
             fetch('https://graphs-analysis.onrender.com/stats', {
                 method: 'POST',
                 headers: {
@@ -96,20 +100,19 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
                 })
                 .catch((error) => {
                     console.error('Error fetching node data:', error);
-                    setError(error.message); // Set error state
+                    setError(error.message); 
                 });
         }
     }, [graphData]);
 
     useEffect(() => {
         if (graphData) {
-            // Fetch nodes data from server
             fetch('https://graphs-analysis.onrender.com/adjacency', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(graphData) // Send graphData here
+                body: JSON.stringify(graphData) 
             })
                 .then((response) => {
                     if (!response.ok) {
@@ -118,12 +121,6 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
                     return response.json();
                 })
                 .then((data: AdjData) => {
-                    console.log('Fetched Adjacency Data:', data);
-
-                    // Check each similarity value
-                    data.cosine_similarity.forEach((item, index) => {
-                        console.log(`Item ${index}:`, item.similarity, typeof item.similarity);
-                    });
                     setAdj(data);
                     
                     setError(null); // Clear any previous errors
@@ -135,6 +132,52 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
         }
     }, [graphData]);
 
+    useEffect(() => {
+        if (adj && project_id ) 
+            {
+                updateGraphDoc(adj,project_id);
+                updateGraphsInUser(project_id);
+            }
+        
+    }, [adj,project_id]);
+
+
+const updateGraphDoc = async (adj,project_id) =>{
+    try {
+        const url = `https://fakebusters-server.onrender.com/api/graphs/${project_id}`;
+            await axios.put(url, 
+                { adj_results: adj.cosine_similarity},{
+                headers: {'Content-Type': 'application/json'},
+            }
+        );
+
+} catch (error) {
+console.error('Error updating adj matrix data in project:', error);
+}};
+  
+
+    const updateGraphsInUser = async (project_id) => {
+       
+        try {
+        const url = `https://fakebusters-server.onrender.com/api/users/${userid}`;
+        const response = await axios.get(url);
+        const user = response.data[0];
+        if (user && !user.graph_id.includes(project_id)){
+            const updatedProjectId = [...user.graph_id, project_id];
+            await axios.put(url, 
+                {graph_id: updatedProjectId },{
+                headers: {'Content-Type': 'application/json'},
+                
+            }
+    );
+}
+} catch (error) {
+console.error('Error updating user project ID:', error);
+}};
+
+
+
+
     return (
         <>
             <FileUploadStructure onUploadSuccess={handleFileUploadSuccess} />
@@ -142,7 +185,7 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
                 <Box sx={{ p: 3 }}>
                     <Grid container spacing={gridSpacing} rowSpacing={2.5}>
                         <Grid item xs={12}>
-                            <Typography variant="h4">Network Analysis</Typography>
+                            <Typography variant="h4">Network Analysis Results</Typography>
                         </Grid>
                         <Grid item xs={12}>
                             <Tabs
