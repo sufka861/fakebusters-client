@@ -11,13 +11,14 @@ const staticMenu: NavItemType = {
     // title: <FormattedMessage id="settings" />,
     type: 'group',
     children: [
+        // {
+        //     id: 'settings',
+        //     title: <FormattedMessage id="settings" />,
+        //     type: 'item',
+        //     icon: IconChartArcs,
+        //     url: '/settings'
+        // },  
         {
-            id: 'settings',
-            title: <FormattedMessage id="settings" />,
-            type: 'item',
-            icon: IconChartArcs,
-            url: '/settings'
-        },  {
             id: 'Logout',
             title: <FormattedMessage id="Logout" />,
             type: 'item',

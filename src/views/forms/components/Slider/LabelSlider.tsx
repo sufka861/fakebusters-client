@@ -10,12 +10,14 @@ interface LabelSliderProps {
     label: string;
     color?: 'primary' | 'secondary';
     step?: number;
+    onChange: (event: Event, value: number) => void;
 }
 
-export default function LabelSlider({ min, max, start, label, color = 'primary', step = 0.1 }: LabelSliderProps) {
+export default function LabelSlider({ min, max, start, label, color = 'primary', step = 0.1, onChange }: LabelSliderProps) {
     const [value, setValue] = React.useState<number>(start);
     const handleChange = (event: Event, newValue: number | number[]) => {
         setValue(newValue as number);
+        onChange(event, newValue as number);
     };
 
     return (
