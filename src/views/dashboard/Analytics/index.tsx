@@ -70,7 +70,7 @@ const Analytics = () => {
     const [rows, setRows] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
-    const [startConnection, setStartConnection]= useState(false)
+    const [startConnection, setStartConnection] = useState(false);
     const [responseFerq, setResponseData] = useState({
         word: null,
         freq: null,
@@ -86,18 +86,31 @@ const Analytics = () => {
         signature: signature,
         typeOfAnalysis: 1,
         saveFrequencyFile: true,
-        saveSettings: false,
+        saveSettings: false
     });
 
+    useEffect(() => {
+        const updatedData = {
+            projectName: projectName,
+            email: email,
+            threshold: threshold,
+            signature: signature,
+            typeOfAnalysis: 1,
+            saveFrequencyFile: true,
+            saveSettings: false
+        };
+        setFormAnalysisData(updatedData);
+    }, [projectName, email, threshold, signature]);
+
     const handleDelete = (namesToDelete) => {
-        setVocabulary(prev => ({
+        setVocabulary((prev) => ({
             ...prev,
-            VocabularyWord: prev.VocabularyWord.filter(item => !namesToDelete.includes(item.name))
+            VocabularyWord: prev.VocabularyWord.filter((item) => !namesToDelete.includes(item.name))
         }));
     };
 
     const handleAddRow = (newWord) => {
-        setVocabulary(prev => ({
+        setVocabulary((prev) => ({
             ...prev,
             VocabularyWord: [...prev.VocabularyWord, { name: newWord }]
         }));
@@ -113,14 +126,14 @@ const Analytics = () => {
     };
 
     useEffect(() => {
-        console.log('useEffect' )
-        console.log(responseFerqData.FrequencyFile )
+        console.log('useEffect');
+        console.log(responseFerqData.FrequencyFile);
 
         if (!responseFerqData.FrequencyFile) {
             return;
         }
-        console.log("useEffect 2")
-        console.log(responseFerqData.FrequencyFile)
+        console.log('useEffect 2');
+        console.log(responseFerqData.FrequencyFile);
 
         const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
         const eventSource = new EventSource(url);
@@ -138,7 +151,7 @@ const Analytics = () => {
                         resultsLPA: data.resultsLPA,
                         chartData,
                         sockpuppetData: data.sockpuppetData,
-                        ...formAnalysisData,
+                        ...formAnalysisData
                     }
                 });
             }
@@ -155,19 +168,19 @@ const Analytics = () => {
     }, [startConnection]);
 
     const handleThresholdSwitchChange = () => {
-        setShowThresholdSettings(prev => !prev);
+        setShowThresholdSettings((prev) => !prev);
     };
 
     const handleThresholdSwitchVocabularyChange = () => {
-        setShowTblholdSettings(prev => !prev);
+        setShowTblholdSettings((prev) => !prev);
     };
 
     const handleDroppingPunctuationSwitchChange = () => {
-        setIsDroppingPunctuation(prev => !prev);
+        setIsDroppingPunctuation((prev) => !prev);
     };
 
     const handleDroppingLinksSwitchVocabularyChange = () => {
-        setIsDroppingLinks(prev => !prev);
+        setIsDroppingLinks((prev) => !prev);
     };
 
     useEffect(() => {
@@ -181,7 +194,7 @@ const Analytics = () => {
     const handleUpFiles = async () => {
         const formData = new FormData();
         if (filesRef.current && filesRef.current.length > 0) {
-            filesRef.current.forEach(file => {
+            filesRef.current.forEach((file) => {
                 formData.append('files', file);
             });
             try {
@@ -228,10 +241,10 @@ const Analytics = () => {
                     FreqWord: FreqWord
                 });
 
-                const initialRows = FreqWord.map(item => createData(item[0], item[1]));
+                const initialRows = FreqWord.map((item) => createData(item[0], item[1]));
                 setRows(initialRows);
 
-                setRefreshKey(prevKey => prevKey + 1);
+                setRefreshKey((prevKey) => prevKey + 1);
                 setIsProcessing(false);
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -271,7 +284,7 @@ const Analytics = () => {
                 }
             });
             console.log('response:', response);
-            
+
             setChartData({
                 categories: response.data.categories,
                 data: response.data.data
@@ -282,17 +295,16 @@ const Analytics = () => {
                 account: response.data.account,
                 initialAuthorsCount: response.data.initial_authors_count,
                 initialPostsCount: response.data.initial_posts_count,
-                FrequencyFile: 'freq_'+freqFileName
+                FrequencyFile: 'freq_' + freqFileName
             });
-            setStartConnection(true)
-            setRefreshKey(prevKey => prevKey + 1);
+            setStartConnection(true);
+            setRefreshKey((prevKey) => prevKey + 1);
             setShowChart(true);
         } catch (error) {
             console.error('Error uploading data:', error);
             setIsProcessing(false);
             setShowChart(false);
-            setStartConnection(false)
-
+            setStartConnection(false);
         }
     };
 
@@ -302,7 +314,7 @@ const Analytics = () => {
         handleStartAnalysis();
         setShowForm(false);
         setLoading(false);
-        setUploadFile(false)
+        setUploadFile(false);
     };
 
     const handleNext = () => {
@@ -342,19 +354,30 @@ const Analytics = () => {
                 <>
                     <Grid item xs={12} sm={12} md={12}>
                         <SubCard>
-                            Before we start, it is necessary to pre-process the file you uploaded. You will have access to charts to help you make informed decisions.
+                            Before we start, it is necessary to pre-process the file you uploaded. You will have access to charts to help
+                            you make informed decisions.
                         </SubCard>
                     </Grid>
                     {showPreChart && (
                         <>
                             <Grid item xs={12} sm={6} md={6}>
                                 <SubCard title="Number of Posts per Author Grouped by Post Count Ranges">
-                                    <ApexColumnChart key={refreshKey} categories={chartPreData.categories} data={chartPreData.data} colors={["#4994ec"]} />
+                                    <ApexColumnChart
+                                        key={refreshKey}
+                                        categories={chartPreData.categories}
+                                        data={chartPreData.data}
+                                        colors={['#4994ec']}
+                                    />
                                 </SubCard>
                             </Grid>
                             <Grid item xs={12} sm={6} md={6}>
                                 <SubCard title="Number of Words per Author Grouped by Post Count Ranges">
-                                    <ApexColumnChart key={refreshKey} categories={chartWordData.categories} data={chartWordData.data} colors={"#613cb0"} />
+                                    <ApexColumnChart
+                                        key={refreshKey}
+                                        categories={chartWordData.categories}
+                                        data={chartWordData.data}
+                                        colors={'#613cb0'}
+                                    />
                                 </SubCard>
                             </Grid>
 
@@ -512,7 +535,11 @@ const Analytics = () => {
             )}
             {isProcessing && (
                 <Grid item xs={12} lg={12} sm={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <MainCardAnalyics title="Your file has been uploaded! We started working!" titleStyle={{ textAlign: 'center' }} style={{ width: '100%' }}>
+                    <MainCardAnalyics
+                        title="Your file has been uploaded! We started working!"
+                        titleStyle={{ textAlign: 'center' }}
+                        style={{ width: '100%' }}
+                    >
                         <Typography variant="body1" align="center">
                             {sentences[sentenceIndex]}
                         </Typography>
@@ -529,12 +556,22 @@ const Analytics = () => {
                     <ReportCards responseFerqData={responseFerqData} />
                     <Grid item xs={12} md={6} lg={6}>
                         <MainCard title="Highest frequency of words 1-10">
-                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(0, 10)} data={chartData.data.slice(0, 10)} bgColor={"#4994ec"} />
+                            <ApexBarChart
+                                key={refreshKey}
+                                categories={chartData.categories.slice(0, 10)}
+                                data={chartData.data.slice(0, 10)}
+                                bgColor={'#4994ec'}
+                            />
                         </MainCard>
                     </Grid>
                     <Grid item xs={12} md={6} lg={6}>
                         <MainCard title="Highest frequency of words 11-20">
-                            <ApexBarChart key={refreshKey} categories={chartData.categories.slice(10, 20)} data={chartData.data.slice(10, 20)} bgColor={"#613cb0"} />
+                            <ApexBarChart
+                                key={refreshKey}
+                                categories={chartData.categories.slice(10, 20)}
+                                data={chartData.data.slice(10, 20)}
+                                bgColor={'#613cb0'}
+                            />
                         </MainCard>
                     </Grid>
                 </>
