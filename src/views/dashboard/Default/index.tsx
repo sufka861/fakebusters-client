@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // material-ui
-import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
@@ -27,14 +26,27 @@ const WidgetData = () => {
     const [singlesData, setSinglesData] = useState([]);
     const [userDetails, setUserDetails] = useState([]);
     const [pairsData, setPairsData] = useState([]);
+    const [countAnalytics, setCountAnalytics] = useState([]);
+    const [checkedUsersCount, setCheckedUsersCount] = useState(0);
+    const [lpaCount, setLpaCount] = useState(0);
+    const [structuralAnalysisCount, setStructuralAnalysisCount] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await fetch('https://fakebusters-server.onrender.com/api/suspects/6650be951fdcf7cb4e278258');
+                const LPAresponse = await fetch('https://fakebusters-server.onrender.com/api/lpa/');
+                // const statsResponse = await fetch('https://fakebusters-server.onrender.com/stats');
+                
                 const data = await response.json();
-                console.log(data); 
+                const lpaData = await LPAresponse.json();
+                // const statsData = await statsResponse.json();
+                
+                console.log(lpaData); 
                 setSinglesData(data.singles); 
+                setCheckedUsersCount(data.singles.length);
+                setLpaCount(lpaData.length);
+                // setStructuralAnalysisCount(statsData.structuralAnalyses);
 
                 const userDetailsPromises = data.singles.map(async (single) => {
                     const username = single.corpus;
@@ -136,7 +148,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4}>
                 <UserCountCard 
                     primary="Number of Checked Users" 
-                    secondary="1,658" 
+                    secondary={checkedUsersCount.toString()} 
                     iconPrimary={AccountCircleTwoTone} 
                     color="secondary.main" 
                 />
@@ -144,7 +156,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
                     primary="Number of LPA Analyses" 
-                    secondary="1K" 
+                    secondary={lpaCount.toString()} 
                     iconPrimary={DescriptionTwoToneIcon} 
                     color="primary.dark" 
                 />
@@ -152,7 +164,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={4} sm={6}>
                 <UserCountCard 
                     primary="Number of Structural Analyses" 
-                    secondary="5,678" 
+                    secondary={structuralAnalysisCount.toString()} 
                     iconPrimary={AssessmentOutlinedIcon} 
                     color="success.dark" 
                 />
@@ -186,9 +198,9 @@ const WidgetData = () => {
                     />
                 </Box>
             </Grid>
-
+         
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title="LPA Analysis - Main Suspects" content={false} sx={{ boxShadow: 3 }}>
+                <MainCard  title={`LPA Analysis - ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
                         <ProjectTable data={userDetails.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
@@ -198,9 +210,9 @@ const WidgetData = () => {
                     </CardActions>
                 </MainCard>
             </Grid>
-
+         
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title="Structural Analysis - Main Suspects" content={false} sx={{ boxShadow: 3 }}>
+                <MainCard    title={`Network Analysis - ${filter} Results`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
                         <ProjectTable data={[]} /> {/* Pass empty array or another dataset here */}
                     </CardContent>
@@ -210,9 +222,9 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title="LPA - Latest Results" content={false}>
+                <MainCard title={`LPA - ${filter} Results`} content={false}>
                     <CardContent sx={{ p: 0 }}>
-                        <PairsResultsTable data={pairsData.slice(0, filter)} /> {/* Apply filter */}
+                        <PairsResultsTable data={pairsData.slice(0, filter)} /> 
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
@@ -221,9 +233,9 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title="Structural Analysis - Latest Results" content={false}>
+                <MainCard title={`Network Analysis - ${filter} Results`} content={false}>
                     <CardContent sx={{ p: 0 }}>
-                        <PairsResultsTable data={pairsData.slice(0, filter)} /> {/* Apply filter */}
+                        <PairsResultsTable data={pairsData.slice(0, filter)} /> 
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
