@@ -80,10 +80,10 @@ const Analytics = () => {
         FrequencyFile: ''
     });
     const [formAnalysisData, setFormAnalysisData] = useState({
-        projectName: '',
-        email: '',
-        threshold: 0.5,
-        signature: 500,
+        projectName: projectName,
+        email: email,
+        threshold: threshold,
+        signature: signature,
         typeOfAnalysis: 1,
         saveFrequencyFile: true,
         saveSettings: false,
