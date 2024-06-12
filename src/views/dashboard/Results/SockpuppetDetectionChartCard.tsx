@@ -18,8 +18,14 @@ interface SockpuppetDetectionChartProps {
 const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetectionChartProps) => {
     if (!sockpuppetData) {
         console.error('SockpuppetDetectionChartCard data is undefined');
-        return <div>No data available</div>;
+        sockpuppetData = {
+            VeryLowLikelihood: 0,
+            LowLikelihood: 0,
+            MediumLikelihood: 0,
+            HighLikelihood: 0
+        };
     }
+
     const chartData = {
         height: 300,
         type: 'pie',
@@ -27,7 +33,7 @@ const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetec
             chart: {
                 id: 'satisfaction-chart'
             },
-            labels: ['Very Low ', 'Low ', 'Medium ', 'High '],
+            labels: ['0 - 0.24  ', '0.25 - 0.49 ', '0.5 - 0.74 ', '0.75 - 1.0'],
             legend: {
                 show: true,
                 position: 'bottom',
@@ -46,7 +52,7 @@ const SockpuppetDetectionChartCard = ({ sockpuppetData, title }: SockpuppetDetec
                 monochrome: {
                     enabled: true
                 }
-            }
+            },
         },
         series: [
             sockpuppetData.VeryLowLikelihood,
