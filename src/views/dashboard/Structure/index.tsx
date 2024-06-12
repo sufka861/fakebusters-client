@@ -133,20 +133,22 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     }, [graphData]);
 
     useEffect(() => {
-        if (adj && project_id ) 
+        if (adj && project_id && nodes ) 
             {
-                updateGraphDoc(adj,project_id);
+                updateGraphDoc(adj,project_id,nodes);
                 updateGraphsInUser(project_id);
             }
         
-    }, [adj,project_id]);
+    }, [adj,project_id,nodes]);
 
 
-const updateGraphDoc = async (adj,project_id) =>{
+const updateGraphDoc = async (adj,project_id,nodes) =>{
     try {
         const url = `https://fakebusters-server.onrender.com/api/graphs/${project_id}`;
             await axios.put(url, 
-                { adj_results: adj.cosine_similarity},{
+                { adj_results: adj.cosine_similarity,
+                    stats: nodes
+                },{
                 headers: {'Content-Type': 'application/json'},
             }
         );

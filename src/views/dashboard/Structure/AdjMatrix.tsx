@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, InputAdornment, TextField, TableSortLabel, Select, MenuItem, Typography, Button
+import {IconButton,Box,Collapse, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, InputAdornment, TextField, TableSortLabel, Select, MenuItem, Typography, Button
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
 import { CSVExport } from 'views/forms/tables/TableExports';
+import { ProfileDataTable } from '../Results/ProfileDataTable';
 
 
 
@@ -30,6 +31,15 @@ const rows = adjData.cosine_similarity;
   const theme = useTheme();
   const [sortConfig, setSortConfig] = useState<{ key: keyof CosineSimilarityRow; direction: 'asc' | 'desc' } | null>(null);
   const [filter, setFilter] = useState<string>('');
+  const [expandedRow, setExpandedRow] = useState<number | null>(null); 
+
+  const handleRowClick = (index:number) => {
+    if (expandedRow === index) {
+      setExpandedRow(null);
+  } else {
+      setExpandedRow(index);
+  }
+};
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(event.target.value.toLowerCase());
@@ -82,7 +92,7 @@ const rows = adjData.cosine_similarity;
             <CSVExport data={sortedData} filename={'Cosine-Similarity-adjacency.csv'} header={headers} />
       </Stack>
       <TableContainer>
-        <Table>
+        <Table sx={{ minWidth: 750 }}>
           <TableHead>
             <TableRow>
               <TableCell onClick={() => requestSort('node1')}>
@@ -102,21 +112,50 @@ const rows = adjData.cosine_similarity;
                 </TableSortLabel>
                 </Tooltip>
               </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {sortedData.map((node) => (
-              <TableRow>
+              <TableCell>Expand</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {sortedData.map((node, index) => (
+               <React.Fragment key={index}>
+               <TableRow hover onClick={() => handleRowClick(index)}>
                 <TableCell>{node.node1}</TableCell>
                 <TableCell>{node.node2}</TableCell>
-                <TableCell>{node.similarity.toFixed(5)}</TableCell>
+                <TableCell>{node.similarity.toFixed(10)}</TableCell>
+                <TableCell>
+                  <IconButton>{expandedRow === index ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
+                </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              {expandedRow === index && (
+                <TableRow>
+                  <TableCell style={{ padding: 0 }} colSpan={4}>
+                    <Collapse in={expandedRow === index} timeout="auto" unmountOnExit>
+                      <Box margin={1} display="flex">
+                        <Box flex={1}>
+                          <Typography variant="h6" gutterBottom component="div">
+                            Profile Data for {node.node1}
+                          </Typography>
+                          <ProfileDataTable username={node.node1} />
+                        </Box>
+                        <Box flex={1}>
+                          <Typography variant="h6" gutterBottom component="div">
+                            Profile Data for {node.node2}
+                          </Typography>
+                          <ProfileDataTable username={node.node2} />
+                        </Box>
+                      </Box>
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              )}
+            </React.Fragment>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
     </>
   );
 }
+
 
 export default AdjMatrix;
