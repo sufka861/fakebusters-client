@@ -146,6 +146,7 @@ const Results = () => {
                 handleSort={handleSort}
                 fetchProjectData={fetchProjectData}
                 selectedProjectData={selectedProjectData}
+                userProjects={userProjects}
             />
         );
     }
