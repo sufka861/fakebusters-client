@@ -26,7 +26,6 @@ import EnhancedTable from './TableData';
 import TableBasic from './TableBasic';
 import ApexColumnChart from './ApexColumnChart';
 
-// table data
 function createData(word, frequency) {
     return { word, frequency };
 }
@@ -48,17 +47,24 @@ const Analytics = () => {
         initialPostsCount: null,
         FrequencyFile: ''
     });
+
     const [uploadFile, setUploadFile] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const filesRef = useRef([]);
     const [showForm, setShowForm] = useState(false);
     const [freqFileName, setFreqFileName] = useState([]);
-    const [projectName, setProjectName] = useState('');
-    const [email, setEmail] = useState('');
-    const [threshold, setThreshold] = useState(0.5);
-    const [signature, setSignature] = useState(200);
-    const [accountThreshold, setAccountThreshold] = useState(30);
-    const [wordThreshold, setWordThreshold] = useState(1000);
+    const [formAnalysisData, setFormAnalysisData] = useState({
+        projectName: '',
+        email: '',
+        threshold: 0.5,
+        signature: 500,
+        typeOfAnalysis: 1,
+        saveFrequencyFile: true,
+        saveSettings: false,
+        account_threshold: 30,
+        wordThreshold: 1000
+    });
+
     const [showThresholdSettings, setShowThresholdSettings] = useState(false);
     const [showTblholdSettings, setShowTblholdSettings] = useState(false);
     const [showHoverDataCard, setHoverDataCard] = useState({ num_authors: '', max_words: '', average_words_per_user: '' });
@@ -71,36 +77,6 @@ const Analytics = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const navigate = useNavigate();
     const [startConnection, setStartConnection] = useState(false);
-    const [responseFerq, setResponseData] = useState({
-        word: null,
-        freq: null,
-        account: null,
-        initialAuthorsCount: null,
-        initialPostsCount: null,
-        FrequencyFile: ''
-    });
-    const [formAnalysisData, setFormAnalysisData] = useState({
-        projectName: projectName,
-        email: email,
-        threshold: threshold,
-        signature: signature,
-        typeOfAnalysis: 1,
-        saveFrequencyFile: true,
-        saveSettings: false
-    });
-
-    useEffect(() => {
-        const updatedData = {
-            projectName: projectName,
-            email: email,
-            threshold: threshold,
-            signature: signature,
-            typeOfAnalysis: 1,
-            saveFrequencyFile: true,
-            saveSettings: false
-        };
-        setFormAnalysisData(updatedData);
-    }, [projectName, email, threshold, signature]);
 
     const handleDelete = (namesToDelete) => {
         setVocabulary((prev) => ({
@@ -117,23 +93,18 @@ const Analytics = () => {
     };
 
     const handleFormChange = (field, value) => {
-        if (field === 'projectName') setProjectName(value);
-        if (field === 'email') setEmail(value);
-        if (field === 'threshold') setThreshold(value);
-        if (field === 'signature') setSignature(value);
-        if (field === 'wordThreshold') setWordThreshold(value);
-        if (field === 'accountThreshold') setAccountThreshold(value);
+        setFormAnalysisData(prevState => ({
+            ...prevState,
+            [field]: value
+        }));
     };
 
     useEffect(() => {
-        console.log('useEffect');
-        console.log(responseFerqData.FrequencyFile);
+        console.log('useEffect', responseFerqData.FrequencyFile);
 
         if (!responseFerqData.FrequencyFile) {
             return;
         }
-        console.log('useEffect 2');
-        console.log(responseFerqData.FrequencyFile);
 
         const url = `https://fakebusters-server.onrender.com/api/sse/lpa-results?fileName=${responseFerqData.FrequencyFile}`;
         const eventSource = new EventSource(url);
@@ -262,18 +233,13 @@ const Analytics = () => {
 
     const handleStartAnalysis = async () => {
         const data = {
-            projectName: projectName,
-            email: email,
-            threshold: threshold,
-            signature: signature,
-            account_threshold: accountThreshold,
-            wordThreshold: wordThreshold,
+            ...formAnalysisData,
             vocabulary: vocabulary.VocabularyWord,
-            isDroppingLinks: isDroppingLinks,
-            isDroppingPunctuation: isDroppingPunctuation,
+            isDroppingLinks,
+            isDroppingPunctuation,
             rowDataFileName: freqFileName,
             topValueWords: showThresholdSettings,
-            showTblholdSettings: showTblholdSettings
+            showTblholdSettings
         };
         console.log('Sending data:', data);
 
@@ -298,7 +264,7 @@ const Analytics = () => {
                 FrequencyFile: 'freq_' + freqFileName
             });
             setStartConnection(true);
-            setRefreshKey((prevKey) => prevKey + 1);
+            setRefreshKey(prevKey => prevKey + 1);
             setShowChart(true);
         } catch (error) {
             console.error('Error uploading data:', error);
@@ -389,7 +355,7 @@ const Analytics = () => {
                                             <TextField
                                                 fullWidth
                                                 placeholder="Enter project name"
-                                                value={projectName}
+                                                value={formAnalysisData.projectName}
                                                 onChange={(e) => handleFormChange('projectName', e.target.value)}
                                             />
                                         </Grid>
@@ -399,7 +365,7 @@ const Analytics = () => {
                                                 type="email"
                                                 fullWidth
                                                 placeholder="Email"
-                                                value={email}
+                                                value={formAnalysisData.email}
                                                 onChange={(e) => handleFormChange('email', e.target.value)}
                                             />
                                         </Grid>
@@ -411,7 +377,7 @@ const Analytics = () => {
                                                 <LabelSlider
                                                     min={0.1}
                                                     max={1}
-                                                    start={threshold}
+                                                    start={formAnalysisData.threshold}
                                                     label="Threshold"
                                                     step={0.1}
                                                     onChange={(e, value) => handleFormChange('threshold', value)}
@@ -419,7 +385,7 @@ const Analytics = () => {
                                                 <LabelSlider
                                                     min={100}
                                                     max={2000}
-                                                    start={signature}
+                                                    start={formAnalysisData.signature}
                                                     label="Signature"
                                                     color="secondary"
                                                     step={100}
@@ -462,15 +428,15 @@ const Analytics = () => {
                                         <LabelSlider
                                             min={10}
                                             max={100}
-                                            start={30}
+                                            start={formAnalysisData.account_threshold}
                                             label="Account Threshold"
                                             step={1}
-                                            onChange={(e, value) => handleFormChange('accountThreshold', value)}
+                                            onChange={(e, value) => handleFormChange('account_threshold', value)}
                                         />
                                         <LabelSlider
                                             min={1000}
                                             max={100000}
-                                            start={showHoverDataCard.average_words_per_user}
+                                            start={formAnalysisData.wordThreshold}
                                             label="Word Threshold"
                                             color="secondary"
                                             step={100}

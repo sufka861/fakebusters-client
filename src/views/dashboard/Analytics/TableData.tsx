@@ -19,6 +19,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import TextField from '@mui/material/TextField';
 import { visuallyHidden } from '@mui/utils';
 
 // project imports
@@ -35,10 +36,12 @@ type CreateDataType = {
     name: string;
     id?: string;
     date_created?: string;
+    createdBy?: string;
+    terms?: string[];
 };
 
-function createData(name: string, id: string, date_created: string): CreateDataType {
-    return { name, id, date_created };
+function createData(name: string, id: string, date_created: string, terms?: string[]): CreateDataType {
+    return { name, id, date_created, terms };
 }
 
 // table filter
@@ -112,17 +115,17 @@ function EnhancedTableHead(props: TableDataEnhancedTableHeadProps) {
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding="normal"
-                        sortDirection={orderBy === headCell.id ? order : false}
+                        sortDirection={props.orderBy === headCell.id ? props.order : false}
                     >
                         <TableSortLabel
-                            active={orderBy === headCell.id}
-                            direction={orderBy === headCell.id ? order : 'asc'}
+                            active={props.orderBy === headCell.id}
+                            direction={props.orderBy === headCell.id ? props.order : 'asc'}
                             onClick={createSortHandler(headCell.id)}
                         >
                             {headCell.label}
-                            {orderBy === headCell.id ? (
+                            {props.orderBy === headCell.id ? (
                                 <Box component="span" sx={visuallyHidden}>
-                                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                    {props.order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </Box>
                             ) : null}
                         </TableSortLabel>
@@ -135,7 +138,7 @@ function EnhancedTableHead(props: TableDataEnhancedTableHeadProps) {
 
 // ==============================|| TABLE - HEADER TOOLBAR ||============================== //
 
-const EnhancedTableToolbar = ({ numSelected, onDelete }: { numSelected: number, onDelete: () => void }) => (
+const EnhancedTableToolbar = ({ numSelected, onDelete, title }: { numSelected: number, onDelete: () => void, title: string }) => (
     <Toolbar
         sx={{
             p: 0,
@@ -152,7 +155,7 @@ const EnhancedTableToolbar = ({ numSelected, onDelete }: { numSelected: number, 
             </Typography>
         ) : (
             <Typography variant="h6" id="tableTitle">
-                Vocabulary
+                {title}
             </Typography>
         )}
         <Box sx={{ flexGrow: 1 }} />
@@ -183,8 +186,12 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const [dense] = useState(false);
     const [selectedValue, setSelectedValue] = useState<CreateDataType[]>([]);
     const [open, setOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [vocabularies, setVocabularies] = useState<CreateDataType[]>([]);
     const [selectedVocabId, setSelectedVocabId] = useState<string | null>(null);
+    const [vocabName, setVocabName] = useState<string>('');
+    const [isDefault, setIsDefault] = useState<boolean>(false);
+    const [tableTitle, setTableTitle] = useState<string>('Vocabulary');
 
     useEffect(() => {
         if (vocabulary) {
@@ -244,22 +251,31 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
     const handleSaveChanges = async () => {
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogSubmit = async () => {
         const data = {
-            terms: vocabulary,
-            name: "roni",
-            is_default: false
-        }
-        console.log(data)
+            terms: rows.map((row) => row.name),  // sending all words currently in the table as strings
+            name: vocabName,
+            is_default: isDefault,
+            createdBy: '6650be951fdcf7cb4e278258'
+        };
         try {
             const response = await axios.post('https://fakebusters-server.onrender.com/api/vocabularies/', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log('Save changes:', response.data);
         } catch (error) {
             console.error('Error saving changes:', error);
         }
-        console.log('Save changes:', selectedValue);
+        setDialogOpen(false);
     };
 
     const handleGetAllStopWords = async () => {
@@ -269,7 +285,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
                     'Content-Type': 'application/json'
                 }
             });
-            const vocabData = response.data.map((vocabulary: any) => createData(vocabulary.name, vocabulary._id, vocabulary.date_modified));
+            const vocabData = response.data.map((vocabulary: any) => createData(vocabulary.name, vocabulary._id, vocabulary.date_modified, vocabulary.terms));
             setVocabularies(vocabData);
             setOpen(true);
         } catch (error) {
@@ -285,18 +301,20 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
         setSelectedVocabId(id);
     };
 
-    const handleSelect = async () => {
+    const handleSelect = () => {
         if (selectedVocabId) {
-            try {
-                const response = await axios.post('https://fakebusters-server.onrender.com/api/selected_vocabulary/', { id: selectedVocabId }, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                console.log('Selected vocabulary:', response.data);
-            } catch (error) {
-                console.error('Error selecting vocabulary:', error);
+            console.log(vocabularies)
+            const selectedVocabulary = vocabularies.find(vocab => vocab.id === selectedVocabId);
+
+            if (selectedVocabulary && selectedVocabulary.terms) {
+                // Update table rows with the selected vocabulary words
+                const newRows = selectedVocabulary.terms.map((term: string) => createData(term, '', ''));
+                setRows(newRows);
+
+                // Update the table title with the selected vocabulary name
+                setTableTitle(`Vocabulary - ${selectedVocabulary.name}`);
             }
+
             setOpen(false);
         }
     };
@@ -304,7 +322,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     return (
         <MainCard
             content={false}
-            title="Vocabulary"
+            title={tableTitle}
             secondary={
                 <Stack direction="row" spacing={2} alignItems="center">
                     <CSVExport data={selectedValue.length > 0 ? selectedValue : rows} filename={'data-tables.csv'} header={header} />
@@ -312,7 +330,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
             }
         >
             <Paper sx={{ width: '100%', mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} onDelete={handleDelete} />
+                <EnhancedTableToolbar numSelected={selected.length} onDelete={handleDelete} title={tableTitle} />
 
                 {/* table */}
                 <TableContainer sx={{ maxHeight: 440 }}>
@@ -418,6 +436,38 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
                     </Button>
                     <Button onClick={handleSelect} color="primary">
                         Select
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={dialogOpen} onClose={handleDialogClose}>
+                <DialogTitle>Create Stop Words</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Vocabulary Name"
+                        type="text"
+                        fullWidth
+                        value={vocabName}
+                        onChange={(e) => setVocabName(e.target.value)}
+                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                        <Checkbox
+                            checked={isDefault}
+                            onChange={(e) => setIsDefault(e.target.checked)}
+                            inputProps={{ 'aria-label': 'Is Default' }}
+                        />
+                        <Typography variant="body2">Set as Default</Typography>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDialogSubmit} color="primary">
+                        Save
                     </Button>
                 </DialogActions>
             </Dialog>

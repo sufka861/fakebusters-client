@@ -183,7 +183,7 @@ const ProfileSection = () => {
                                                         '& .MuiListItemButton-root': { mt: 0.5 }
                                                     }}
                                                 >
-                                                    <ListItemButton
+                                                    {/* <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 0}
                                                         onClick={(event: React.MouseEvent<HTMLDivElement>) =>
@@ -229,8 +229,8 @@ const ProfileSection = () => {
                                                                     </Grid>
                                                                 </Grid>
                                                             }
-                                                        />
-                                                    </ListItemButton>
+                                                        /> */}
+                                                    {/* </ListItemButton> */}
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${borderRadius}px` }}
                                                         selected={selectedIndex === 4}
