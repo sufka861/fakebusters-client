@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import {IconButton,Box,Collapse, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, InputAdornment, TextField, TableSortLabel, Select, MenuItem, Typography, Button
+import {IconButton,Box,Collapse, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, InputAdornment, TextField, TableSortLabel, Select, MenuItem, Typography, Button, CircularProgress, Grid
 } from '@mui/material';
 import { Search as SearchIcon, ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
@@ -75,6 +75,11 @@ const rows = adjData.cosine_similarity;
 
   return (
     <>
+        {!adjData && (
+            <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <CircularProgress aria-label="progress" />
+        </Grid>
+        )};
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <TextField
           variant="outlined"

@@ -87,7 +87,7 @@ const FileUploadStructure: React.FC<FileUploadStructureProps> = ({ onUploadSucce
     };
 
     return (
-        <Grid container spacing={2} sx={{ paddingBottom: 2 }}>
+        <Grid container spacing={2} >
             <Grid item xs={12} >
                 <MainCard>
                     <InputLabel>Project Name</InputLabel>
@@ -105,7 +105,7 @@ const FileUploadStructure: React.FC<FileUploadStructureProps> = ({ onUploadSucce
                     {!uploadedFileName ? (
                         <React.Fragment>
                             <Dropzone fileRef={fileRef} />
-                            <Grid item xs={12} container justifyContent="flex-end" paddingTop={1}>
+                            <Grid item xs={12} container justifyContent="flex-end">
                                 <Button variant="contained" color="secondary" onClick={handleClickOpen}>
                                     Start Network Analysis
                                 </Button>

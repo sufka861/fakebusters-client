@@ -61,7 +61,6 @@ const LeadSummary = ({ isLoading }: { isLoading: boolean }) => {
     };
 
     const handleFileUploadSuccess = (data: any) => {
-        console.log(data)
         setGraphData(data);
         setTabValue(0);
         setProject_id(data._id)
@@ -177,12 +176,11 @@ console.error('Error updating adj matrix data in project:', error);
 console.error('Error updating user project ID:', error);
 }};
 
-
-
-
     return (
+       
         <>
             <FileUploadStructure onUploadSuccess={handleFileUploadSuccess} />
+            {graphData && (
             <MainCard content={false}>
                 <Box sx={{ p: 3 }}>
                     <Grid container spacing={gridSpacing} rowSpacing={2.5}>
@@ -265,6 +263,7 @@ console.error('Error updating user project ID:', error);
                     </Grid>
                 </Box>
             </MainCard>
+            )}
         </>
     );
 };

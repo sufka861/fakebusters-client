@@ -91,7 +91,6 @@ const ResultsGraphs = () => {
 
     const fetchProjectData = async (_id:any) => {
         try {
-            console.log(_id)
             const response = await axios.get(`https://fakebusters-server.onrender.com/api/graphs/${_id}`);
             setSelectedProjectData(response.data);
         } catch (error) {
