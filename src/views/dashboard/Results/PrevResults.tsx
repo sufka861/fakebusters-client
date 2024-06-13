@@ -21,7 +21,7 @@ const PrevResults = ({
     userProjects
 }) => {
     return (
-        <Grid container spacing={gridSpacing} justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+        <Grid justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
                 <Grid item xs={12}>
                 <Box sx={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
                     <MainCard title="Previous Results">
@@ -30,11 +30,11 @@ const PrevResults = ({
                                 <Typography variant="h4" align="center">
                                     No Results Available
                                 </Typography>
-                                {/* <Box textAlign="center" mt={2}>
+                                <Box textAlign="center" mt={2}>
                                     <Button variant="contained" color="secondary" onClick={() => navigate('/dashboard/analytics')}>
                                         NEW ANALYSIS
                                     </Button>
-                                </Box> */}
+                                </Box>
                             </div>
                         ) : (
                             <Box textAlign="center" mt={2}>
