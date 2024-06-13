@@ -306,7 +306,7 @@ const WidgetData = () => {
             </Grid>
          
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard    title={`Network Analysis - Top ${filter} Results`} content={false} sx={{ boxShadow: 3 }}>
+                <MainCard    title={`Network Analysis - Top ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
                         <ProjectTable data={networkSinglesData.slice(0, filter)} /> {/* Apply filter */}
                     </CardContent>
@@ -316,7 +316,7 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`LPA - Top ${filter} Results`} content={false}>
+                <MainCard title={`LPA - Top ${filter} Sockpuppets`} content={false}>
                     <CardContent sx={{ p: 0 }}>
                         <PairsResultsTable data={pairsData.slice(0, filter)} /> 
                     </CardContent>
@@ -327,7 +327,7 @@ const WidgetData = () => {
                 </MainCard>
             </Grid>
             <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`Network Analysis - Top ${filter} Results`} content={false}>
+                <MainCard title={`Network Analysis - Top ${filter} Sockpuppets`} content={false}>
                     <CardContent sx={{ p: 0 }}>
                         <PairsResultsTable data={networkPairsData.slice(0, filter)} /> 
                     </CardContent>

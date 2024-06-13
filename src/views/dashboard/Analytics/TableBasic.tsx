@@ -65,7 +65,7 @@ export default function TableBasic({ rows, setRows, selectedRows, setSelectedRow
             <Grid item xs={12}>
                 <MainCard
                     content={false}
-                    title="The most common words in the file"
+                    title="Common Terms"
                     secondary={
                         <Stack direction="row" spacing={2} alignItems="center">
                             <CSVExport data={rows} filename={'basic-table.csv'} header={header} />
@@ -77,7 +77,7 @@ export default function TableBasic({ rows, setRows, selectedRows, setSelectedRow
                         <Table stickyHeader sx={{ minWidth: 350 }} aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ pl: 3 }}>Word</TableCell>
+                                    <TableCell sx={{ pl: 3 }}>Term</TableCell>
                                     <TableCell align="right" sx={{ pr: 3 }}>
                                         Frequency
                                     </TableCell>
@@ -103,11 +103,11 @@ export default function TableBasic({ rows, setRows, selectedRows, setSelectedRow
             <Grid item xs={12}>
                 <MainCard
                     content={false}
-                    title="Selected Words"
+                    title="Selected Terms"
                     secondary={
                         <Stack direction="row" spacing={2}>
                             <Button variant="contained" color="primary" onClick={handleAddSelectedToTable}>
-                                Add to vocabulary
+                                Add to Stop-Words
                             </Button>
                             <Button variant="contained" color="secondary" onClick={handleClearSelection}>
                                 Clear Selection

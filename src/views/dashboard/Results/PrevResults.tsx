@@ -30,14 +30,14 @@ const PrevResults = ({
                                 <Typography variant="h4" align="center">
                                     No Results Available
                                 </Typography>
-                                <Box textAlign="center" mt={2}>
+                                {/* <Box textAlign="center" mt={2}>
                                     <Button variant="contained" color="secondary" onClick={() => navigate('/dashboard/analytics')}>
                                         NEW ANALYSIS
                                     </Button>
-                                </Box>
+                                </Box> */}
                             </div>
                         ) : (
-                            <Box textAlign="center" mt={4}>
+                            <Box textAlign="center" mt={2}>
                                 <TextField
                                     label="Search"
                                     value={filter}

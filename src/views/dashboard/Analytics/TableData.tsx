@@ -191,7 +191,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
     const [selectedVocabId, setSelectedVocabId] = useState<string | null>(null);
     const [vocabName, setVocabName] = useState<string>('');
     const [isDefault, setIsDefault] = useState<boolean>(false);
-    const [tableTitle, setTableTitle] = useState<string>('Vocabulary');
+    const [tableTitle, setTableTitle] = useState<string>('Stop-Words');
 
     useEffect(() => {
         if (vocabulary) {
@@ -379,16 +379,16 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
 
                 <Stack direction="row" spacing={2}>
                     <Button variant="contained" color="primary" onClick={handleSaveChanges}>
-                        Create Stop Words
+                        Create Stop-Words
                     </Button>
                     <Button variant="contained" color="secondary" onClick={handleGetAllStopWords}>
-                        Get Stop Words
+                        Get Stop-Words
                     </Button>
                 </Stack>
             </Paper>
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Vocabularies</DialogTitle>
+                <DialogTitle>Stop-Words</DialogTitle>
                 <DialogContent>
                     <TableContainer component={Paper}>
                         <Table>
@@ -447,7 +447,7 @@ export default function EnhancedTable({ vocabulary, onDelete, onAddRow, setVocab
                         autoFocus
                         margin="dense"
                         id="name"
-                        label="Vocabulary Name"
+                        label="Stop-Words Name"
                         type="text"
                         fullWidth
                         value={vocabName}

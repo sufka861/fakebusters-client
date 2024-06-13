@@ -401,19 +401,19 @@ const Analytics = () => {
                                     <Grid container spacing={2}>
                                         <Grid item xs={12}>
                                             <Switch defaultChecked color="primary" onChange={handleDroppingPunctuationSwitchChange} />
-                                            Dropping punctuation marks
+                                            Remove punctuation marks
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Switch color="primary" onChange={handleThresholdSwitchChange} />
-                                            Threshold of posts
+                                            Custom Threshold
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Switch color="primary" onChange={handleThresholdSwitchVocabularyChange} />
-                                            Changing a dictionary for belonging words
+                                            Custom Stop Words
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Switch defaultChecked color="primary" onChange={handleDroppingLinksSwitchVocabularyChange} />
-                                            Dropping links
+                                            Remove links
                                         </Grid>
                                     </Grid>
                                 </SubCard>
@@ -423,7 +423,7 @@ const Analytics = () => {
                     {showThresholdSettings && (
                         <>
                             <Grid item xs={12} sm={6}>
-                                <SubCard title="Note! The defined settings are recommended for the LPA algorithm and any change may harm the results">
+                                <SubCard title="Note! The default settings are recommended for the LPA algorithm and any change may change the results">
                                     <Grid container spacing={1}>
                                         <LabelSlider
                                             min={10}
@@ -451,7 +451,7 @@ const Analytics = () => {
                                         title="Maximum"
                                         iconPrimary={ArrowDownwardIcon}
                                         primary={showHoverDataCard.max_words}
-                                        secondary="amount of words"
+                                        secondary="word count"
                                         color="success.main"
                                     />
                                 </SubCard>
