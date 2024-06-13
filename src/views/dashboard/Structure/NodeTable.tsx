@@ -19,10 +19,8 @@ export interface NodeUser {
   out_degree_centrality: number;
   betweenness_centrality: number;
   closeness_centrality: number;
-  eigen_centrality: number;
   clustering_coefficient: number;
   page_rank: number;
-  eccentricity: number;
 }
 
 interface NodeTableProps {
@@ -73,10 +71,8 @@ function NodeTable({ nodes }: NodeTableProps) {
     { label: "Out Degree Centrality", key: "out_degree_centrality" },
     { label: "Betweenness Centrality", key: "betweenness_centrality" },
     { label: "Closeness Centrality", key: "closeness_centrality" },
-    // { label: "Eigenvector Centrality", key: "eigen_centrality" },
     { label: "Clustering Coefficient", key: "clustering_coefficient" },
     { label: "PageRank", key: "page_rank" },
-    { label: "Eccentricity", key: "eccentricity" }
   ];
 
   return (
@@ -141,13 +137,6 @@ function NodeTable({ nodes }: NodeTableProps) {
                 </TableSortLabel>
                 </Tooltip>
               </TableCell>
-              {/* <TableCell onClick={() => requestSort('eigen_centrality')}>
-              <Tooltip title="Importance of a profile based on connections and its influence within a network">
-                <TableSortLabel active={sortConfig?.key === 'eigen_centrality'} direction={sortConfig?.direction}>
-                  Eigenvector Centrality
-                </TableSortLabel>
-                </Tooltip>
-              </TableCell> */}
               <TableCell onClick={() => requestSort('clustering_coefficient')}>
               <Tooltip title="How well a profile's followers are connected to each other (community)">
                 <TableSortLabel active={sortConfig?.key === 'clustering_coefficient'} direction={sortConfig?.direction}>
@@ -159,13 +148,6 @@ function NodeTable({ nodes }: NodeTableProps) {
               <Tooltip title="Importance of a profile based on incoming links from important profiles">
                 <TableSortLabel active={sortConfig?.key === 'page_rank'} direction={sortConfig?.direction}>
                   PageRank
-                </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-              <TableCell onClick={() => requestSort('eccentricity')}>
-              <Tooltip title="Maximum distance from a profile to any other profile, cannot be calculated if graph is disconnected">
-                <TableSortLabel active={sortConfig?.key === 'eccentricity'} direction={sortConfig?.direction}>
-                  Eccentricity
                 </TableSortLabel>
                 </Tooltip>
               </TableCell>
@@ -183,7 +165,6 @@ function NodeTable({ nodes }: NodeTableProps) {
                 {/* <TableCell>{node.eigen_centrality}</TableCell> */}
                 <TableCell>{node.clustering_coefficient}</TableCell>
                 <TableCell>{node.page_rank}</TableCell>
-                <TableCell>{node.eccentricity}</TableCell>
               </TableRow>
             ))}
           </TableBody>
