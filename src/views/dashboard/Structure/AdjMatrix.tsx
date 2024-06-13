@@ -8,7 +8,6 @@ import { CSVExport } from 'views/forms/tables/TableExports';
 import { ProfileDataTable } from '../Results/ProfileDataTable';
 
 
-
 interface CosineSimilarityRow {
     node1: string;
     node2: string;
@@ -29,9 +28,12 @@ export interface AdjData {
 function AdjMatrix({ adjData }: { adjData: AdjData }) {
 const rows = adjData.cosine_similarity;
   const theme = useTheme();
-  const [sortConfig, setSortConfig] = useState<{ key: keyof CosineSimilarityRow; direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof CosineSimilarityRow; direction: 'asc' | 'desc' }>({ key: 'similarity', direction: 'asc' });
   const [filter, setFilter] = useState<string>('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null); 
+  useEffect(() => {
+    requestSort('similarity');
+  }, []);
 
   const handleRowClick = (index:number) => {
     if (expandedRow === index) {
