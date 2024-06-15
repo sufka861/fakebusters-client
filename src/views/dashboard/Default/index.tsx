@@ -16,6 +16,7 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentTwoTone';
 
 import UserCountCard from 'ui-component/cards/UserCountCard';
 import PairsResultsTable from './PairsResultsTable';
+import PairsResultsTableNetwork from './PairsResultsTableNetwork';
 import ProjectTable from './ProjectTable';
 
 import MainCard from 'ui-component/cards/MainCard';
@@ -277,7 +278,7 @@ const WidgetData = () => {
                     }}
                 >
                     <Typography variant="h6" gutterBottom sx={{ mr: 2 }}>
-                        Show top number of users
+                        Number of rows to display
                     </Typography>
                     <Slider
                         value={filter}
@@ -293,6 +294,29 @@ const WidgetData = () => {
                 </Box>
             </Grid>
          
+           
+            <Grid item xs={12} lg={6} md={6}>
+                <MainCard title={`LPA - Top ${filter} Sockpuppets`} content={false}>
+                    <CardContent sx={{ p: 0 }}>
+                        <PairsResultsTable data={pairsData.slice(0, filter)} /> 
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+
+                    </CardActions>
+                </MainCard>
+            </Grid>
+            <Grid item xs={12} lg={6} md={6}>
+                <MainCard title={`Network Analysis - Top ${filter} Sockpuppets`} content={false}>
+                    <CardContent sx={{ p: 0 }}>
+                        <PairsResultsTableNetwork data={networkPairsData.slice(0, filter)} /> 
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'flex-end' }}>
+
+                    </CardActions>
+                </MainCard>
+            </Grid>
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard  title={`LPA Analysis- Top ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
@@ -312,28 +336,6 @@ const WidgetData = () => {
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
-                    </CardActions>
-                </MainCard>
-            </Grid>
-            <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`LPA - Top ${filter} Sockpuppets`} content={false}>
-                    <CardContent sx={{ p: 0 }}>
-                        <PairsResultsTable data={pairsData.slice(0, filter)} /> 
-                    </CardContent>
-                    <Divider />
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-
-                    </CardActions>
-                </MainCard>
-            </Grid>
-            <Grid item xs={12} lg={6} md={6}>
-                <MainCard title={`Network Analysis - Top ${filter} Sockpuppets`} content={false}>
-                    <CardContent sx={{ p: 0 }}>
-                        <PairsResultsTable data={networkPairsData.slice(0, filter)} /> 
-                    </CardContent>
-                    <Divider />
-                    <CardActions sx={{ justifyContent: 'flex-end' }}>
-
                     </CardActions>
                 </MainCard>
             </Grid>

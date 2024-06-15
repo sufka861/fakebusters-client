@@ -9,7 +9,7 @@ const ProjectTable = ({ data = [] }) => {
                 <TableHead>
                     <TableRow>
                         <TableCell sx={{ pl: 3 }}>User</TableCell>
-                        <TableCell align="right">Average Value (%)</TableCell>
+                        <TableCell align="right">Sockpuppet Potential (%)</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Avatar, Grid, Typography } from '@mui/material';
 
-const PairsResultsTable = ({ data = [] }) => {
+const PairsResultsTableNetwork = ({ data = [] }) => {
     return (
         <Paper>
             <Table>
@@ -10,7 +10,7 @@ const PairsResultsTable = ({ data = [] }) => {
                     <TableRow>
                         <TableCell sx={{ pl: 3 }}>User 1</TableCell>
                         <TableCell sx={{ pl: 3 }}>User 2</TableCell>
-                        <TableCell align="right">Distance</TableCell>
+                        <TableCell align="right">Similarity</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -47,7 +47,7 @@ const PairsResultsTable = ({ data = [] }) => {
     );
 };
 
-PairsResultsTable.propTypes = {
+PairsResultsTableNetwork.propTypes = {
     data: PropTypes.arrayOf(
         PropTypes.shape({
             user1Name: PropTypes.string.isRequired,
@@ -61,4 +61,4 @@ PairsResultsTable.propTypes = {
     )
 };
 
-export default PairsResultsTable;
+export default PairsResultsTableNetwork;
