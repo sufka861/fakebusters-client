@@ -40,14 +40,21 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
 
       const maxDegree = Math.max(...Array.from(nodeDegreeMap.values()));
 
-      const scaledNodes = nodes.map(node => ({
-        ...node,
-        size: (nodeDegreeMap.get(node.id) || 0) / maxDegree * 22, // Scale size based on degree centrality
-        color: '#64B5F6',
-        font: {
-          size: 0, // Hide node labels
-        },
-      }));
+      // Check if maxDegree is greater than 0 to avoid division by zero
+      const minNodeSize = 10;
+      const maxNodeSize = 50;
+      const scaleFactor = maxDegree > 0 ? (maxNodeSize - minNodeSize) / maxDegree : 1;
+
+      const scaledNodes = nodes.map(node => {
+        const degree = nodeDegreeMap.get(node.id) || 0;
+        const size = minNodeSize + degree * scaleFactor;
+        console.log(`Node ID: ${node.id}, Degree: ${degree}, Size: ${size}`); // Debugging: Log node sizes
+        return {
+          ...node,
+          size: Math.min(size, maxNodeSize),
+          color: '#64B5F6',
+        };
+      });
 
       const data = {
         nodes: scaledNodes,
@@ -56,7 +63,11 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
 
       const options: Options = {
         nodes: {
-          shape: 'dot',
+          shape: 'dot', // Use 'dot' to reflect size
+          scaling: {
+            min: minNodeSize, // Minimum size
+            max: maxNodeSize, // Maximum size
+          },
           font: {
             size: 0, // Hide node labels
           },
@@ -79,13 +90,6 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
       };
 
       const network = new Network(containerRef.current, data, options);
-      
-      // Optionally, if you need access to the network instance
-      // you can use it in other parts of your component.
-      // For example, you could add event handling or access methods like getPositions.
-      // network.on("click", function(params) {
-      //   console.log("clicked on node: ", params.nodes[0]);
-      // });
     }
   }, [nodes, edges]);
 
