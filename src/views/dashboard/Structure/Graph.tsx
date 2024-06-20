@@ -1,6 +1,6 @@
 // Graph.tsx
 import React, { useEffect, useRef } from 'react';
-import { Network, Options } from 'react-vis-network-graph';
+import { DataSet, Network, Options } from 'vis-network/standalone';
 import 'vis-network/styles/vis-network.css';
 
 export interface Node {
@@ -56,8 +56,8 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
       });
 
       const data = {
-        nodes: scaledNodes,
-        edges,
+        nodes: new DataSet(scaledNodes),
+        edges: new DataSet(edges),
       };
 
       const options: Options = {
@@ -88,7 +88,7 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
         height: '500px',
       };
 
-      const network = new Network(containerRef.current, data, options);
+      new Network(containerRef.current, data, options);
     }
   }, [nodes, edges]);
 
