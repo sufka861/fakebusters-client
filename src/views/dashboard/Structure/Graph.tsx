@@ -1,6 +1,6 @@
 // Graph.tsx
 import React, { useEffect, useRef } from 'react';
-import { Network, Options } from 'vis-network/standalone';
+import { DataSet, Network, Options } from 'vis-network/standalone';
 import 'vis-network/styles/vis-network.css';
 
 export interface Node {
@@ -48,7 +48,6 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
       const scaledNodes = nodes.map(node => {
         const degree = nodeDegreeMap.get(node.id) || 0;
         const size = minNodeSize + degree * scaleFactor;
-        console.log(`Node ID: ${node.id}, Degree: ${degree}, Size: ${size}`); // Debugging: Log node sizes
         return {
           ...node,
           size: Math.min(size, maxNodeSize),
@@ -57,8 +56,8 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
       });
 
       const data = {
-        nodes: scaledNodes,
-        edges,
+        nodes: new DataSet(scaledNodes),
+        edges: new DataSet(edges),
       };
 
       const options: Options = {
@@ -89,7 +88,7 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
         height: '500px',
       };
 
-      const network = new Network(containerRef.current, data, options);
+      new Network(containerRef.current, data, options);
     }
   }, [nodes, edges]);
 
