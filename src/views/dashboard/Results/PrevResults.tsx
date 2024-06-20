@@ -81,7 +81,7 @@ const PrevResults = ({
                                                             direction={sortConfig.direction}
                                                             onClick={() => handleSort('file_id')}
                                                         >
-                                                            File ID
+                                                            Dataset
                                                         </TableSortLabel>
                                                     </TableCell>
                                                     <TableCell>Action</TableCell>
