@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Avatar, Grid, Typography } from '@mui/material';
 
-const ProjectTable = ({ data = [] }) => {
+const ProjectTable = ({ data = [] ,showAdjustedValue = true}) => {
     return (
         <Paper>
             <Table>
@@ -26,7 +26,9 @@ const ProjectTable = ({ data = [] }) => {
                                     </Grid>
                                 </Grid>
                             </TableCell>
-                            <TableCell align="right">{((1 - row.averageValue) * 100).toFixed(2)}%</TableCell>
+                            <TableCell align="right">{showAdjustedValue
+                                    ? ((1 - row.averageValue) * 100).toFixed(2) + '%'
+                                    : (row.averageValue * 100).toFixed(2) + '%'}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -44,7 +46,9 @@ ProjectTable.propTypes = {
             averageValue: PropTypes.number.isRequired,
             status: PropTypes.string.isRequired
         })
-    )
+    ),
+    showAdjustedValue: PropTypes.bool
+
 };
 
 export default ProjectTable;

@@ -30,7 +30,7 @@ function Statistics({ nodes, error }: StatisticsProps) {
         );
     }
 
-    if (!nodes.length) {
+    if (!nodes) {
         return (
             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <CircularProgress aria-label="progress" />

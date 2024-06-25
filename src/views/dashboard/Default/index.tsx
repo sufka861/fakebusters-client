@@ -332,7 +332,7 @@ const WidgetData = () => {
             <Grid item xs={12} lg={6} md={6}>
                 <MainCard    title={`Network Analysis - Top ${filter} Suspects`} content={false} sx={{ boxShadow: 3 }}>
                     <CardContent sx={{ p: 2 }}>
-                        <ProjectTable data={networkSinglesData.slice(0, filter)} /> {/* Apply filter */}
+                        <ProjectTable data={networkSinglesData.slice(0, filter)} showAdjustedValue={false} /> {/* Apply filter */}
                     </CardContent>
                     <Divider />
                     <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>

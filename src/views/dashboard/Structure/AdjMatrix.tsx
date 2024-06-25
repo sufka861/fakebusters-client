@@ -73,15 +73,16 @@ const rows = adjData.cosine_similarity;
     }
     setSortConfig({ key, direction });
   };
-
-
-  return (
-    <>
-        {!adjData && (
+    
+  if (sortedData.length === 0) {
+        return (
             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
             <CircularProgress aria-label="progress" />
         </Grid>
-        )};
+        );
+    }
+        return (
+        <>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <TextField
           variant="outlined"
