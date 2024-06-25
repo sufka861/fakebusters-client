@@ -36,8 +36,8 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
         });
 
         const maxDegree = Math.max(...Array.from(nodeDegreeMap.values()));
-        const minNodeSize = 10;
-        const maxNodeSize = 50;
+        const minNodeSize = 12;
+        const maxNodeSize = 60;
         const scaleFactor = maxDegree > 0 ? (maxNodeSize - minNodeSize) / maxDegree : 1;
         return nodes.map((node) => {
             const degree = nodeDegreeMap.get(node.id) || 0;
@@ -58,100 +58,74 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
                 edges
             };
 
-            const options: Options = 
-            // {
-            //     layout: {
-            //         randomSeed: 1,
-            //         hierarchical: false,
-            //         improvedLayout: false
-            //     },
-            //     nodes: {
-            //         shape: 'dot',
-            //         font: {
-            //             size: 12,
-            //             face: 'Calibri'
-            //         }
-            //     },
-            //     edges: {
-            //         smooth: {
-            //             enabled: true,
-            //             type: 'continuous',
-            //             forceDirection: 'none',
-            //             roundness: 0.5
-            //         },
-            //         arrows: {
-            //             to: { enabled: true, scaleFactor: 1, type: 'arrow' }
-            //         }
-            //     },
-            //     autoResize: true,
-            //     interaction: {
-            //         zoomView: true
-            //     },
-            //     physics: {
-            //         enabled: true,
-            //         hierarchicalRepulsion: {
-            //             avoidOverlap: 0.8,
-            //             springConstant: 0.001,
-            //             nodeDistance: 100,
-            //             damping: 1.5
-            //         },
-            //         stabilization: {
-            //             iterations: 2000,
-            //             updateInterval: 100,
-            //             onlyDynamicEdges: false,
-            //             fit: true
-            //         },
-            //         solver: 'hierarchicalRepulsion'
-            //     }
-            // };
-            {
-              nodes: {
-                shape: 'dot',
-                                          font: {
-                              size: 12,
-                              face: 'Calibri'
-                          },
-                scaling: {
-                  min: 12,
-                  max: 60,
+            const options: Options = {
+                layout: {
+                    randomSeed: 1,
+                    hierarchical: false,
+                    improvedLayout: true
                 },
-
-              },
-              edges: {
-                arrows: {
-                  to: { enabled: true, scaleFactor: 1, type: 'arrow' }},
-                  smooth: {
-                                enabled: true,
-                                type: 'continuous',
-                                forceDirection: 'none',
-                                roundness: 0.5
-                            },
-                 color: '#27292A',
-              },
-                              autoResize: true,
-                interaction: {
-                    zoomView: true
-                },
-              layout: {
-                        randomSeed: 1,
-                       // hierarchical: false,
-                        improvedLayout: true
+                nodes: {
+                    shape: 'dot',
+                    font: {
+                        size: 12,
+                        face: 'Calibri'
                     },
-              
-      
-              physics: {
-                hierarchicalRepulsion: {
-                               avoidOverlap: 0.8,
-                               nodeDistance: 100,
-                               springConstant: 0.001,},
-                stabilization: {
-                  enabled: true,
-                  iterations: 2000,
-                  onlyDynamicEdges: false,
-                  fit: true
-                }}
-                         
+                    size: 20,  // Example size, adjust as needed
+                    scaling: {
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    color: {
+                        background: '#64B5F6', // Node background color
+                        border: '#1E88E5',     // Node border color
+                        highlight: {
+                            background: '#1976D2',
+                            border: '#1565C0'
+                        },
+                        hover: {
+                            background: '#2196F3',
+                            border: '#1E88E5'
+                        }
+                    }
+                },
+                edges: {
+                    smooth: {
+                        enabled: true,
+                        type: 'continuous',
+                        forceDirection: 'none',
+                        roundness: 0.5
+                    },
+                    arrows: {
+                        to: { enabled: true, scaleFactor: 1, type: 'arrow' }
+                    },
+                    length: 300  // Adjust edge length as needed
+                },
+                autoResize: true,
+                interaction: {
+                    dragNodes: true,  // Allow dragging of nodes
+                    dragView: true,   // Allow dragging of the entire view (panning)
+                    zoomView: true    // Allow zooming
+                },
+                physics: {
+                    enabled: true,
+                    hierarchicalRepulsion: {
+                        avoidOverlap: 2,     // Increase to ensure nodes do not overlap
+                        centralGravity: 0.1, // Example central gravity, adjust as needed
+                        springLength: 300,   // Adjust spring length
+                        springConstant: 0.05,// Adjust spring constant
+                        nodeDistance: 400,   // Increase to spread nodes further apart
+                        damping: 0.5
+                    },
+                    stabilization: {
+                        iterations: 2000,
+                        updateInterval: 200,
+                        onlyDynamicEdges: false,
+                        fit: true  // Disable automatic fitting of the graph
+                    }
+                }
             };
+            
 
             const network = new Network(containerRef.current, data, options);
             return () => {
