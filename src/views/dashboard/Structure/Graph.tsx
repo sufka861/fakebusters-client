@@ -105,7 +105,8 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
                 interaction: {
                     dragNodes: true,  // Allow dragging of nodes
                     dragView: true,   // Allow dragging of the entire view (panning)
-                    zoomView: true    // Allow zooming
+                    zoomView: true,    // Allow zooming
+                    zoomSpeed: 0.1
                 },
                 physics: {
                     enabled: true,
