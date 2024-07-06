@@ -42,7 +42,6 @@ const GraphA: React.FC<GraphAProps> = ({ nodes, edges }) => {
         return nodes.map((node) => {
             const degree = nodeDegreeMap.get(node.id) || 0;
             const size = minNodeSize + degree * scaleFactor;
-            console.log(`Node ID: ${node.id}, Degree: ${degree}, Size: ${size}`); // Debugging: Log node sizes
             return {
                 ...node,
                 size: Math.min(size, maxNodeSize),

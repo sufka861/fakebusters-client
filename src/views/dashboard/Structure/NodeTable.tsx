@@ -18,9 +18,9 @@ export interface NodeUser {
   in_degree_centrality: number;
   out_degree_centrality: number;
   betweenness_centrality: number;
-  eccentricity: number;
   closeness_centrality: number;
   clustering_coefficient: number;
+  eccentricity: number;
   page_rank: number;
 }
 
@@ -133,14 +133,7 @@ function NodeTable({ nodes }: NodeTableProps) {
                 </Tooltip>
               </TableCell>
               <TableCell onClick={() => requestSort('closeness_centrality')}>
-              <Tooltip title="Average distance (shortest path) to all other profiles, measuring the efficiency of spreading information through a network">
-                <TableSortLabel active={sortConfig?.key === 'closeness_centrality'} direction={sortConfig?.direction}>
-                  Closeness Centrality
-                </TableSortLabel>
-                </Tooltip>
-              </TableCell>
-              <TableCell onClick={() => requestSort('closeness_centrality')}>
-              <Tooltip title="Average distance (shortest path) to all other profiles, measuring the efficiency of spreading information through a network">
+              <Tooltip title="Average distance (shortest path) to all other profiles, measuring the efficiency of spreading information through a graph">
                 <TableSortLabel active={sortConfig?.key === 'closeness_centrality'} direction={sortConfig?.direction}>
                   Closeness Centrality
                 </TableSortLabel>
@@ -150,6 +143,13 @@ function NodeTable({ nodes }: NodeTableProps) {
               <Tooltip title="The maximum distance from a node to any other node in the network">
                 <TableSortLabel active={sortConfig?.key === 'eccentricity'} direction={sortConfig?.direction}>
                 Eccentricity
+                </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+              <TableCell onClick={() => requestSort('clustering_coefficient')}>
+              <Tooltip title="How well a profile's followers are connected to each other (community)">
+                <TableSortLabel active={sortConfig?.key === 'clustering_coefficient'} direction={sortConfig?.direction}>
+                  Clustering Coefficient
                 </TableSortLabel>
                 </Tooltip>
               </TableCell>

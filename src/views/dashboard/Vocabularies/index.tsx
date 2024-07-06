@@ -32,8 +32,6 @@ const Vocabularies: React.FC = () => {
           axios.get('https://fakebusters-server.onrender.com/api/vocabularies/vocabularyDefault/12345674'),
           axios.get('https://fakebusters-server.onrender.com/api/vocabularies/vocabularyNonDefault/12345674')
         ]);
-        console.log('Default vocabulary result:', defaultResult.data);
-        console.log('Vocabularies result:', vocabulariesResult.data);
         const defaultData = {
           id: defaultResult.data._id,
           name: defaultResult.data.name,
